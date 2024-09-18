@@ -1,0 +1,28 @@
+{
+    "printWidth": 80,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "quoteProps": "as-needed",
+    "jsxSingleQuote": true,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "bracketSameLine": false,
+    "arrowParens": "always",
+    "endOfLine": "auto",
+    "useEditorConfig": false,
+    "plugins": ["@ianvs/prettier-plugin-sort-imports"],
+    "importOrder": [
+        "<BUILTIN_MODULES>",
+        "<THIRD_PARTY_MODULES>",
+        "",
+        "^@plasmo/(.*)$",
+        "",
+        "^@plasmohq/(.*)$",
+        "",
+        "^~(.*)$",
+        "",
+        "^[./]"
+    ]
+}
