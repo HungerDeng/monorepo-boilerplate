@@ -1,12 +1,15 @@
 node_modules/
 dist/
+components/
 pnpm-lock.yaml
 tsconfig.json
 tailwind.config.js
 tailwind.config.ts
 package.json
 globals.css
+turbo.json
 
+*.json
 *.mdxs
 *.md
 *.png

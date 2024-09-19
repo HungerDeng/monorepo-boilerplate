@@ -1,4 +1,7 @@
+import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+
+import './globals.css';
 
 function IndexPopup() {
   const [data, setData] = useState('');
@@ -9,6 +12,7 @@ function IndexPopup() {
         padding: 16,
       }}
     >
+      <Button>Click me</Button>
       <h2>
         Welcome to your{' '}
         <a href='https://www.plasmo.com' target='_blank'>
