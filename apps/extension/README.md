@@ -35,3 +35,22 @@ The easiest way to deploy your Plasmo extension is to use the built-in [bpp](htt
 ## custom shadcn ui dir
 
 [guide](https://github.com/shadcn-ui/ui/pull/2266)
+
+## standardized extension tailwind css unit size
+
+### background
+
+rem is always going to refer to what font-size is set in the documents <html> (it's also not valid to nest <html> tags).
+
+**reference:** https://github.com/PlasmoHQ/plasmo/issues/1086
+
+### how to fix
+
+Use em instead of rem with Tailwind.
+
+tailwind css customizing the default spacing and sizing scale for your project. [guide](https://tailwindcss.com/docs/customizing-spacing#default-spacing-scale)
+
+**reference:**
+
+- https://github.com/tailwindlabs/tailwindcss/discussions/3768
+- https://github.com/huygn/tailwind-unit-replace?tab=readme-ov-file
