@@ -1,6 +1,22 @@
 {
-    "extends": ["@commitlint/config-conventional"],
-    "rules": {
-      "scope-empty": [2, "never"]
+  "extends": ["@commitlint/config-conventional"],
+  "rules": {
+    "scope-empty": [2, "never"],
+    "type-enum": [
+      2,
+      "always",
+      [
+        "wip",
+        "feat",
+        "fix",
+        "docs",
+        "style",
+        "refactor",
+        "perf",
+        "test",
+        "chore",
+        "revert"
+      ]
+    ]
   }
 }
