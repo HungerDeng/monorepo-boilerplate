@@ -1,7 +1,10 @@
 'use client';
 
-import { Canvas, FabricImage, FabricText } from 'fabric';
+import { Canvas, FabricImage, Textbox } from 'fabric';
 import { useEffect, useRef, useState } from 'react';
+
+const FABRIC_TEXT_TYPE_ARRAY = ['textbox', 'i-text', 'text'];
+const FABRIC_IMAGE_TYPE_ARRAY = ['image'];
 
 export default function Page(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -73,9 +76,9 @@ export default function Page(): JSX.Element {
 
     // If there's only one object selected, show the appropriate toolbar
     if (selectedObjects.length === 1) {
-      if (targetObject.type === 'text') {
+      if (FABRIC_TEXT_TYPE_ARRAY.includes(targetObject.type)) {
         showTextToolbarFun();
-      } else if (targetObject.type === 'image') {
+      } else if (FABRIC_IMAGE_TYPE_ARRAY.includes(targetObject.type)) {
         showImageToolbarFun();
       }
       return;
@@ -94,16 +97,16 @@ export default function Page(): JSX.Element {
       fabricCanvas.current.requestRenderAll();
 
       // Show appropriate toolbar based on the target object
-      if (targetObject.type === 'text') {
+      if (FABRIC_TEXT_TYPE_ARRAY.includes(targetObject.type)) {
         showTextToolbarFun();
-      } else if (targetObject.type === 'image') {
+      } else if (FABRIC_IMAGE_TYPE_ARRAY.includes(targetObject.type)) {
         showImageToolbarFun();
       }
     } else {
       // All objects are of the same type, show appropriate toolbar
-      if (firstObjectType === 'text') {
+      if (FABRIC_TEXT_TYPE_ARRAY.includes(firstObjectType)) {
         showTextToolbarFun();
-      } else if (firstObjectType === 'image') {
+      } else if (FABRIC_IMAGE_TYPE_ARRAY.includes(firstObjectType)) {
         showImageToolbarFun();
       }
     }
@@ -122,9 +125,9 @@ export default function Page(): JSX.Element {
   //     setShowImageToolbar(false);
   //     return;
   //   }
-  //   if (selectedObjects.every((obj) => obj.type === 'text')) {
+  //   if (selectedObjects.every((obj) => FABRIC_TEXT_TYPE_ARRAY.includes(obj.type))) {
   //     showTextToolbarFun();
-  //   } else if (selectedObjects.every((obj) => obj.type === 'image')) {
+  //   } else if (selectedObjects.every((obj) => FABRIC_IMAGE_TYPE_ARRAY.includes(obj.type))) {
   //     showImageToolbarFun();
   //   } else {
   //     // keep only the last selected object selected while deselecting all others when end-users select objects of different types (text and image), since the system shouldn't support selecting multiple objects of different types simultaneously.
@@ -136,9 +139,9 @@ export default function Page(): JSX.Element {
   //     // const lastSelected = selectedObjects[selectedObjects.length - 1];
   //     // fabricCanvas.current.discardActiveObject();
   //     // fabricCanvas.current.setActiveObject(lastSelected);
-  //     // if (lastSelected.type === 'text') {
+  //     // if (FABRIC_TEXT_TYPE_ARRAY.includes(lastSelected.type)) {
   //     //   showTextToolbarFun();
-  //     // } else if (lastSelected.type === 'image') {
+  //     // } else if (FABRIC_IMAGE_TYPE_ARRAY.includes(lastSelected.type)) {
   //     //   showImageToolbarFun();
   //     // }
   //   }
@@ -154,7 +157,7 @@ export default function Page(): JSX.Element {
     if (!fabricCanvas.current) return;
 
     fabricCanvas.current.getActiveObjects().forEach((obj) => {
-      if (obj.isType('Text')) {
+      if (FABRIC_TEXT_TYPE_ARRAY.includes(obj.type)) {
         obj.set({ [property]: value });
       }
     });
@@ -164,7 +167,7 @@ export default function Page(): JSX.Element {
 
   const handleAddText = () => {
     if (!fabricCanvas.current) return;
-    const text = new FabricText('Edit me', {
+    const text = new Textbox('Edit me', {
       left: 100,
       top: 100,
       fontSize: 48,
@@ -172,6 +175,12 @@ export default function Page(): JSX.Element {
       stroke: 'black',
       strokeWidth: 2,
       fontFamily: 'Impact',
+
+      // Customizing the caret
+      cursorColor: 'black', // Fabric.js v5+ supports this, but you may need a workaround for older versions
+      cursorWidth: 1, // Makes the cursor thicker
+      cursorDelay: 500, // Default 1000ms (lower = faster blink)
+      cursorDuration: 300, // Cursor visible duration (lower = shorter visibility)
     });
     fabricCanvas.current?.add(text);
     fabricCanvas.current?.setActiveObject(text);
