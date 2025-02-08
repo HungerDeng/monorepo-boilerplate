@@ -1,13 +1,23 @@
 'use client';
 
 import { Canvas, FabricImage, FabricText } from 'fabric';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Page(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvas = useRef<Canvas | null>(null);
+  const [showTextToolbar, setShowTextToolbar] = useState(false);
+  const [showImageToolbar, setShowImageToolbar] = useState(false);
+  console.log('showImageToolbar', showImageToolbar);
+  const [textProps, setTextProps] = useState({
+    fontFamily: 'Impact',
+    fontSize: 48,
+    fill: '#ffffff',
+    fontWeight: 'normal',
+    underline: false,
+  });
 
-  // Initialize Fabric.js canvas
+  // Initialize Fabric.js canvas with selection events
   useEffect(() => {
     if (canvasRef.current === null) return;
     fabricCanvas.current = new Canvas(canvasRef.current, {
@@ -17,10 +27,140 @@ export default function Page(): JSX.Element {
       height: 600,
     });
 
+    const canvas = fabricCanvas.current;
+
+    // Handle selection events
+    canvas.on('selection:created', handleSelection);
+    canvas.on('selection:updated', handleSelection);
+    canvas.on('selection:cleared', handleSelectionCleared);
+
+    // Enable shift key selection
+    canvas.set('selection', {
+      multiple: true,
+    });
+
     return () => {
-      fabricCanvas?.current?.dispose();
+      canvas?.dispose();
+      canvas.off('selection:created', handleSelection);
+      canvas.off('selection:updated', handleSelection);
+      canvas.off('selection:cleared', handleSelectionCleared);
     };
   }, []);
+
+  const showTextToolbarFun = () => {
+    setShowTextToolbar(true);
+    setShowImageToolbar(false);
+  };
+
+  const showImageToolbarFun = () => {
+    setShowImageToolbar(true);
+    setShowTextToolbar(false);
+  };
+
+  const handleSelection = (e: any) => {
+    if (!fabricCanvas.current) return;
+
+    const selectedObjects = fabricCanvas.current.getActiveObjects();
+    if (selectedObjects.length === 0) {
+      setShowTextToolbar(false);
+      setShowImageToolbar(false);
+      return;
+    }
+
+    // Get the target object that triggered the selection event
+    const targetObject = e.selected?.[e.selected.length - 1];
+    if (!targetObject) return;
+
+    // If there's only one object selected, show the appropriate toolbar
+    if (selectedObjects.length === 1) {
+      if (targetObject.type === 'text') {
+        showTextToolbarFun();
+      } else if (targetObject.type === 'image') {
+        showImageToolbarFun();
+      }
+      return;
+    }
+
+    // For multiple selections, check if they're all the same type
+    const firstObjectType = selectedObjects[0].type;
+    const hasMultipleTypes = selectedObjects.some(
+      (obj) => obj.type !== firstObjectType,
+    );
+
+    if (hasMultipleTypes) {
+      // Keep only the target object selected while deselecting all others when end-users select objects of different types (text and image), since the system shouldn't support selecting multiple objects of different types simultaneously.
+      fabricCanvas.current.discardActiveObject();
+      fabricCanvas.current.setActiveObject(targetObject);
+      fabricCanvas.current.requestRenderAll();
+
+      // Show appropriate toolbar based on the target object
+      if (targetObject.type === 'text') {
+        showTextToolbarFun();
+      } else if (targetObject.type === 'image') {
+        showImageToolbarFun();
+      }
+    } else {
+      // All objects are of the same type, show appropriate toolbar
+      if (firstObjectType === 'text') {
+        showTextToolbarFun();
+      } else if (firstObjectType === 'image') {
+        showImageToolbarFun();
+      }
+    }
+  };
+
+  // remain the following code for reminder: The type of the last selected object is always detected as image, even when I have selected a FabricText object last. the detailed description is in the comment below.
+  //
+  // const handleSelectionV0 = () => {
+  //   if (!fabricCanvas.current) {
+  //     return;
+  //   }
+  //   // fabricCanvas.current.getActiveObjects() returns an array with the current selected objects
+  //   const selectedObjects = fabricCanvas.current.getActiveObjects();
+  //   if (selectedObjects.length === 0) {
+  //     setShowTextToolbar(false);
+  //     setShowImageToolbar(false);
+  //     return;
+  //   }
+  //   if (selectedObjects.every((obj) => obj.type === 'text')) {
+  //     showTextToolbarFun();
+  //   } else if (selectedObjects.every((obj) => obj.type === 'image')) {
+  //     showImageToolbarFun();
+  //   } else {
+  //     // keep only the last selected object selected while deselecting all others when end-users select objects of different types (text and image), since the system shouldn't support selecting multiple objects of different types simultaneously.
+  //     // pitfall: The type of the last selected object is always detected as image, even when I have selected a FabricText object last. It seems that we can't simply rely on the type of the last element in the array, must use other approaches.
+  //     //
+  //     // for (let i = 0; i < selectedObjects.length; i++) {
+  //     //   console.log(`Index: ${i}, Type: ${selectedObjects[i].type}`);
+  //     // }
+  //     // const lastSelected = selectedObjects[selectedObjects.length - 1];
+  //     // fabricCanvas.current.discardActiveObject();
+  //     // fabricCanvas.current.setActiveObject(lastSelected);
+  //     // if (lastSelected.type === 'text') {
+  //     //   showTextToolbarFun();
+  //     // } else if (lastSelected.type === 'image') {
+  //     //   showImageToolbarFun();
+  //     // }
+  //   }
+  // };
+
+  const handleSelectionCleared = () => {
+    setShowTextToolbar(false);
+    setShowImageToolbar(false);
+  };
+
+  // Update properties for all selected texts
+  const updateTextProperty = (property: string, value: any) => {
+    if (!fabricCanvas.current) return;
+
+    fabricCanvas.current.getActiveObjects().forEach((obj) => {
+      if (obj.isType('Text')) {
+        obj.set({ [property]: value });
+      }
+    });
+    setTextProps((prev) => ({ ...prev, [property]: value }));
+    fabricCanvas.current.renderAll();
+  };
 
   const handleAddText = () => {
     if (!fabricCanvas.current) return;
@@ -47,6 +187,7 @@ export default function Page(): JSX.Element {
       const img = await FabricImage.fromURL(
         event.target?.result as string,
         {},
+        // TODO: adjust image size to fit canvas
         (img: any) => {
           // Scale image to fit canvas if needed
           img.scaleToWidth(fabricCanvas.current!.width * 0.8);
@@ -74,6 +215,88 @@ export default function Page(): JSX.Element {
 
   return (
     <main className='flex min-h-screen p-8 gap-8'>
+      {/* Text Formatting Toolbar - Only shown when text is selected */}
+      {showTextToolbar && (
+        <div className='fixed top-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-2 flex items-center gap-4 z-10'>
+          {/* Font Family Selector */}
+          <select
+            value={textProps.fontFamily}
+            onChange={(e) => updateTextProperty('fontFamily', e.target.value)}
+            className='border rounded px-2 py-1'
+          >
+            <option value='Open Sans'>Open Sans</option>
+            <option value='Impact'>Impact</option>
+            <option value='Arial'>Arial</option>
+            <option value='Times New Roman'>Times New Roman</option>
+          </select>
+
+          {/* Font Size Input */}
+          <div className='flex items-center gap-2'>
+            <button
+              onClick={() =>
+                updateTextProperty(
+                  'fontSize',
+                  Math.max(1, textProps.fontSize - 2),
+                )
+              }
+              className='px-2 hover:bg-gray-100 rounded'
+            >
+              -
+            </button>
+            <input
+              type='number'
+              value={textProps.fontSize}
+              onChange={(e) =>
+                updateTextProperty(
+                  'fontSize',
+                  Math.max(1, parseInt(e.target.value) || 1),
+                )
+              }
+              className='w-16 border rounded px-2 py-1'
+            />
+            <button
+              onClick={() =>
+                updateTextProperty('fontSize', textProps.fontSize + 2)
+              }
+              className='px-2 hover:bg-gray-100 rounded'
+            >
+              +
+            </button>
+          </div>
+
+          {/* Text Color Picker */}
+          <input
+            type='color'
+            value={textProps.fill}
+            onChange={(e) => updateTextProperty('fill', e.target.value)}
+            className='w-8 h-8'
+          />
+
+          {/* Bold Toggle */}
+          <button
+            onClick={() =>
+              updateTextProperty(
+                'fontWeight',
+                textProps.fontWeight === 'bold' ? 'normal' : 'bold',
+              )
+            }
+            className={`px-2 py-1 rounded ${textProps.fontWeight === 'bold' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+          >
+            B
+          </button>
+
+          {/* Underline Toggle */}
+          <button
+            onClick={() =>
+              updateTextProperty('underline', !textProps.underline)
+            }
+            className={`px-2 py-1 rounded ${textProps.underline ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+          >
+            U
+          </button>
+        </div>
+      )}
+
       {/* Canvas Section */}
       <div className='flex-1'>
         {/* 
