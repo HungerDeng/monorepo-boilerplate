@@ -1,119 +1,172 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Canvas, FabricImage, FabricText } from 'fabric';
+import { useEffect, useRef } from 'react';
 
 export default function Page(): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [topText, setTopText] = useState('');
-  const [bottomText, setBottomText] = useState('');
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const fabricCanvas = useRef<Canvas | null>(null);
+
+  // Initialize Fabric.js canvas
+  useEffect(() => {
+    if (canvasRef.current === null) return;
+    fabricCanvas.current = new Canvas(canvasRef.current, {
+      backgroundColor: '#ffffff',
+      preserveObjectStacking: true,
+      width: 800,
+      height: 600,
+    });
+
+    return () => {
+      fabricCanvas?.current?.dispose();
+    };
+  }, []);
+
+  const handleAddText = () => {
+    if (!fabricCanvas.current) return;
+    const text = new FabricText('Edit me', {
+      left: 100,
+      top: 100,
+      fontSize: 48,
+      fill: 'white',
+      stroke: 'black',
+      strokeWidth: 2,
+      fontFamily: 'Impact',
+    });
+    fabricCanvas.current?.add(text);
+    fabricCanvas.current?.setActiveObject(text);
+    fabricCanvas.current?.renderAll();
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new window.Image();
-        img.src = event.target?.result as string;
-        img.onload = () => setImage(img);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+    if (!file || !fabricCanvas.current) return;
 
-  const drawCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw image if exists
-    if (image) {
-      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    }
-
-    // Configure text style
-    ctx.fillStyle = 'white';
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 2;
-    ctx.font = '48px Impact';
-    ctx.textAlign = 'center';
-
-    // Draw top text
-    ctx.fillText(topText, canvas.width / 2, 50);
-    ctx.strokeText(topText, canvas.width / 2, 50);
-
-    // Draw bottom text
-    ctx.fillText(bottomText, canvas.width / 2, canvas.height - 20);
-    ctx.strokeText(bottomText, canvas.width / 2, canvas.height - 20);
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const img = await FabricImage.fromURL(
+        event.target?.result as string,
+        {},
+        (img: any) => {
+          // Scale image to fit canvas if needed
+          img.scaleToWidth(fabricCanvas.current!.width * 0.8);
+          img.set({
+            left: fabricCanvas.current!.width / 2,
+            top: fabricCanvas.current!.height / 2,
+            originX: 'center',
+            originY: 'center',
+          });
+        },
+      );
+      fabricCanvas.current!.add(img);
+      fabricCanvas.current!.renderAll();
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleExport = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
+    if (!fabricCanvas.current) return;
     const link = document.createElement('a');
     link.download = 'meme.png';
-    link.href = canvas.toDataURL();
+    link.href = fabricCanvas.current.toDataURL();
     link.click();
   };
-
-  useEffect(() => {
-    drawCanvas();
-  }, [image, topText, bottomText]);
 
   return (
     <main className='flex min-h-screen p-8 gap-8'>
       {/* Canvas Section */}
       <div className='flex-1'>
+        {/* 
+        The HTML <canvas> element is the actual rendering surface required by the browser to draw graphics. Fabric.js works as a wrapper/library around this native element - it can't exist without it. In short, canvas element is mendatory for fabricjs to work.
+        */}
         <canvas
+          id='canvas'
           ref={canvasRef}
-          width={800}
-          height={600}
-          className='border border-gray-300 bg-white'
+          className='border border-gray-300'
         />
       </div>
 
-      {/* Sidebar Controls */}
-      <div className='w-80 space-y-6 p-4 bg-gray-100 rounded-lg'>
-        <div className='space-y-2'>
-          <h2 className='font-bold text-lg'>Upload Image</h2>
-          <input
-            type='file'
-            accept='image/*'
-            onChange={handleImageUpload}
-            className='w-full'
-          />
-        </div>
+      {/* Simplified Sidebar Controls */}
+      <div className='w-20 space-y-6 p-4 bg-gray-100 rounded-lg'>
+        <div className='flex flex-col items-center gap-4'>
+          <div className='flex flex-col items-center'>
+            <label className='cursor-pointer'>
+              <input
+                type='file'
+                accept='image/*'
+                onChange={handleImageUpload}
+                className='hidden'
+              />
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                className='w-8 h-8'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+              >
+                <path d='M7 16a4 4 0 0 1-4-4 4 4 0 0 1 4-4h.5a5.5 5.5 0 0 1 11 0H19a4 4 0 0 1 4 4 4 4 0 0 1-4 4H7z' />
+                <path d='M12 12v6' />
+                <path d='M9 15l3-3 3 3' />
+              </svg>
+            </label>
+            <span className='text-xs mt-1'>Upload</span>
+          </div>
 
-        <div className='space-y-2'>
-          <h2 className='font-bold text-lg'>Add Text</h2>
-          <input
-            type='text'
-            placeholder='Top Text'
-            value={topText}
-            onChange={(e) => setTopText(e.target.value)}
-            className='w-full p-2 border rounded'
-          />
-          <input
-            type='text'
-            placeholder='Bottom Text'
-            value={bottomText}
-            onChange={(e) => setBottomText(e.target.value)}
-            className='w-full p-2 border rounded'
-          />
-        </div>
+          <div className='flex flex-col items-center'>
+            <button onClick={handleAddText}>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                className='w-8 h-8'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+              >
+                <path d='M17 10H3' />
+                <path d='M21 6H3' />
+                <path d='M21 14H3' />
+                <path d='M17 18H3' />
+              </svg>
+            </button>
+            <span className='text-xs mt-1'>Text</span>
+          </div>
 
-        <button
-          onClick={handleExport}
-          className='w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600'
-        >
-          Export Meme
-        </button>
+          <div className='flex flex-col items-center'>
+            <button onClick={handleAddText}>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                className='w-8 h-8'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+              >
+                <path d='M12 20h9' />
+                <path d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z' />
+              </svg>
+            </button>
+            <span className='text-xs mt-1'>Draw</span>
+          </div>
+
+          <div className='flex flex-col items-center'>
+            <button onClick={handleExport}>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                className='w-8 h-8'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+              >
+                <path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' />
+                <polyline points='7 10 12 15 17 10' />
+                <line x1='12' y1='15' x2='12' y2='3' />
+              </svg>
+            </button>
+            <span className='text-xs mt-1'>Export</span>
+          </div>
+        </div>
       </div>
     </main>
   );
