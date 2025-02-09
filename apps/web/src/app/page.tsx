@@ -176,11 +176,33 @@ export default function Page(): JSX.Element {
       strokeWidth: 2,
       fontFamily: 'Impact',
 
+      borderScaleFactor: 2, // the bigger number, the thicker border
+
       // Customizing the caret
       cursorColor: 'black', // Fabric.js v5+ supports this, but you may need a workaround for older versions
       cursorWidth: 1, // Makes the cursor thicker
       cursorDelay: 500, // Default 1000ms (lower = faster blink)
       cursorDuration: 300, // Cursor visible duration (lower = shorter visibility)
+    });
+    // reference: https://github.com/fabricjs/fabric.js/discussions/7797#discussioncomment-2958064
+    // UX effect: when hovering over the textbox, its border becomes visible even if it is not selected.
+    text.on('mouseover', () => {
+      text._renderControls(
+        text.canvas?.contextTop as CanvasRenderingContext2D,
+        {
+          hasControls: false,
+        },
+      );
+    });
+    text.on('mouseout', () => {
+      text.canvas?.clearContext(
+        text.canvas?.contextTop as CanvasRenderingContext2D,
+      );
+    });
+    text.on('mousedown', () => {
+      text.canvas?.clearContext(
+        text.canvas?.contextTop as CanvasRenderingContext2D,
+      );
     });
     fabricCanvas.current?.add(text);
     fabricCanvas.current?.setActiveObject(text);
@@ -208,6 +230,26 @@ export default function Page(): JSX.Element {
           });
         },
       );
+      // reference: https://github.com/fabricjs/fabric.js/discussions/7797#discussioncomment-2958064
+      // UX effect: when hovering over the image, its border becomes visible even if it is not selected.
+      img.on('mouseover', () => {
+        img._renderControls(
+          img.canvas?.contextTop as CanvasRenderingContext2D,
+          {
+            hasControls: false,
+          },
+        );
+      });
+      img.on('mouseout', () => {
+        img.canvas?.clearContext(
+          img.canvas?.contextTop as CanvasRenderingContext2D,
+        );
+      });
+      img.on('mousedown', () => {
+        img.canvas?.clearContext(
+          img.canvas?.contextTop as CanvasRenderingContext2D,
+        );
+      });
       fabricCanvas.current!.add(img);
       fabricCanvas.current!.renderAll();
     };
@@ -221,6 +263,44 @@ export default function Page(): JSX.Element {
     link.href = fabricCanvas.current.toDataURL();
     link.click();
   };
+
+  // It is not working by changing the unselected textbox's borderColor property to make its border visible when hovering over it. Because according to the Fabric.js documentation, the borderColor property is Color of controlling borders of an object (when it’s active!!!).
+  //
+  // const [originalBorderColor, setOriginalBorderColor] =
+  //   useState<string>(DEFAULT_BORDER_COLOR);
+  // // Add mouse hover events
+  // canvas.on('mouse:over', handleMouseOver);
+  // canvas.on('mouse:out', handleMouseOut);
+
+  // const handleMouseOver = (e: any) => {
+  //   if (!e.target || !fabricCanvas.current) return;
+
+  //   const target = e.target;
+  //   // Check if the object is currently selected
+  //   const isSelected = fabricCanvas.current.getActiveObjects().includes(target);
+  //   if (isSelected) return;
+
+  //   setOriginalBorderColor(target.borderColor);
+  //   target.set({
+  //     borderColor: '#00ff00',
+  //   });
+  //   fabricCanvas.current.renderAll();
+  // };
+
+  // const handleMouseOut = (e: any) => {
+  //   if (!e.target || !fabricCanvas.current) return;
+
+  //   const target = e.target;
+  //   const isSelected = fabricCanvas.current.getActiveObjects().includes(target);
+  //   if (isSelected) return;
+
+  //   // Restore original properties
+  //   target.set({
+  //     borderColor: originalBorderColor,
+  //   });
+  //   setOriginalBorderColor(DEFAULT_BORDER_COLOR);
+  //   fabricCanvas.current.renderAll();
+  // };
 
   return (
     <main className='flex min-h-screen p-8 gap-8'>
