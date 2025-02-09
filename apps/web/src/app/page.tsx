@@ -3,6 +3,9 @@
 import { Canvas, FabricImage, Textbox } from 'fabric';
 import { useEffect, useRef, useState } from 'react';
 
+import { Toaster } from '~*/components/ui/toaster';
+import { useToast } from '~*/hooks/use-toast';
+
 import { defaultImageProps, ImageToolbar } from '../components/ImageToolbar';
 import { defaultTextProps, TextToolbar } from '../components/TextToolbar';
 
@@ -15,6 +18,7 @@ export default function Page(): JSX.Element {
   const [showTextToolbar, setShowTextToolbar] = useState(false);
   const [showImageToolbar, setShowImageToolbar] = useState(false);
   const [showUndoHint, setShowUndoHint] = useState(false);
+  const { toast } = useToast();
 
   const [textProps, setTextProps] = useState(defaultTextProps);
   const [imageProps, setImageProps] = useState(defaultImageProps);
@@ -96,6 +100,11 @@ export default function Page(): JSX.Element {
           fabricCanvas.current.add(...objectsToRestore);
           fabricCanvas.current.requestRenderAll();
         } else {
+          toast({
+            title: 'Nothing to undo',
+            description: 'Only deletion undo supported currently',
+          });
+
           setShowUndoHint(true);
           setTimeout(() => setShowUndoHint(false), 3000);
         }
@@ -173,11 +182,18 @@ export default function Page(): JSX.Element {
       // TODO: need to check if all the text objects have the same properties
       const firstTextbox = textObjects[0];
       setTextProps({
-        fontFamily: firstTextbox.get('fontFamily'),
-        fontSize: firstTextbox.get('fontSize'),
-        fill: firstTextbox.get('fill'),
-        fontWeight: firstTextbox.get('fontWeight'),
-        underline: firstTextbox.get('underline'),
+        fontFamily: firstTextbox.get('fontFamily') as string,
+        fontSize: firstTextbox.get('fontSize') as number,
+        fill: firstTextbox.get('fill') as string,
+        fontWeight: firstTextbox.get('fontWeight') as string,
+        underline: firstTextbox.get('underline') as boolean,
+        linethrough: firstTextbox.get('linethrough') as boolean,
+        uppercase: firstTextbox.get('uppercase') as boolean,
+        textAlign: firstTextbox.get('textAlign') as string,
+        charSpacing: firstTextbox.get('charSpacing') as number,
+        lineHeight: firstTextbox.get('lineHeight') as number,
+        opacity: firstTextbox.get('opacity') as number,
+        fontStyle: firstTextbox.get('fontStyle') as string,
       });
     }
   };
@@ -436,6 +452,7 @@ export default function Page(): JSX.Element {
         {/* 
         The HTML <canvas> element is the actual rendering surface required by the browser to draw graphics. Fabric.js works as a wrapper/library around this native element - it can't exist without it. In short, canvas element is mendatory for fabricjs to work.
         */}
+        <Toaster />
         <canvas
           id='canvas'
           ref={canvasRef}
