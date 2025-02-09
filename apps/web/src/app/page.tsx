@@ -3,6 +3,7 @@
 import { Canvas, FabricImage, Textbox } from 'fabric';
 import { useEffect, useRef, useState } from 'react';
 
+import { defaultImageProps, ImageToolbar } from '../components/ImageToolbar';
 import { defaultTextProps, TextToolbar } from '../components/TextToolbar';
 
 const FABRIC_TEXT_TYPE_ARRAY = ['textbox', 'i-text', 'text'];
@@ -14,9 +15,9 @@ export default function Page(): JSX.Element {
   const [showTextToolbar, setShowTextToolbar] = useState(false);
   const [showImageToolbar, setShowImageToolbar] = useState(false);
   const [showUndoHint, setShowUndoHint] = useState(false);
-  console.log('showImageToolbar', showImageToolbar);
 
   const [textProps, setTextProps] = useState(defaultTextProps);
+  const [imageProps, setImageProps] = useState(defaultImageProps);
 
   // Change state type to array of arrays
   const [deletedObjects, setDeletedObjects] = useState<any[][]>([]);
@@ -379,6 +380,25 @@ export default function Page(): JSX.Element {
   //   fabricCanvas.current.renderAll();
   // };
 
+  // properties for all selected images
+  const updateImageProperties = (updates: Record<string, any>) => {
+    if (!fabricCanvas.current) return;
+
+    fabricCanvas.current.getActiveObjects().forEach((obj) => {
+      if (FABRIC_IMAGE_TYPE_ARRAY.includes(obj.type)) {
+        Object.entries(updates).forEach(([property, value]) => {
+          obj.set({ [property]: value });
+        });
+      }
+    });
+
+    setImageProps((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+    fabricCanvas.current.requestRenderAll();
+  };
+
   return (
     <main className='flex min-h-screen p-8 gap-8'>
       {/* Text Formatting Toolbar - Only shown when text is selected */}
@@ -386,6 +406,14 @@ export default function Page(): JSX.Element {
         <TextToolbar
           textProps={textProps}
           updateTextProperty={updateTextProperty}
+        />
+      )}
+
+      {/* Image Formatting Toolbar - Only shown when image is selected */}
+      {showImageToolbar && (
+        <ImageToolbar
+          imageProps={imageProps}
+          updateImageProperties={updateImageProperties}
         />
       )}
 
