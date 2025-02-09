@@ -20,8 +20,8 @@ export default function Page(): JSX.Element {
     underline: false,
   });
 
-  // Add state for tracking deletion history
-  const [deletedObjects, setDeletedObjects] = useState<any[]>([]);
+  // Change state type to array of arrays
+  const [deletedObjects, setDeletedObjects] = useState<any[][]>([]);
 
   // Initialize Fabric.js canvas with selection events
   useEffect(() => {
@@ -63,8 +63,8 @@ export default function Page(): JSX.Element {
       if (e.key === 'Delete' || e.key === 'Backspace') {
         const activeObjects = fabricCanvas.current.getActiveObjects();
         if (activeObjects.length > 0) {
-          // Store deleted objects in state
-          setDeletedObjects((prev) => [...prev, ...activeObjects]);
+          // Store as a single array in the history
+          setDeletedObjects((prev) => [...prev, activeObjects]);
           fabricCanvas.current.remove(...activeObjects);
           fabricCanvas.current.discardActiveObject();
           fabricCanvas.current.requestRenderAll();
@@ -76,14 +76,14 @@ export default function Page(): JSX.Element {
       // Improved undo functionality
       if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
         if (deletedObjects.length > 0) {
-          // Get the last deleted object(s)
+          // Get the last deleted group
           const objectsToRestore = deletedObjects[deletedObjects.length - 1];
 
-          // Remove the restored object from deletion history
+          // Remove the restored group from history
           setDeletedObjects((prev) => prev.slice(0, -1));
 
-          // Add the object back to canvas
-          fabricCanvas.current.add(objectsToRestore);
+          // Add all objects from the group
+          fabricCanvas.current.add(...objectsToRestore);
           fabricCanvas.current.requestRenderAll();
         }
       }
@@ -319,7 +319,7 @@ export default function Page(): JSX.Element {
     link.click();
   };
 
-  // It is not working by changing the unselected textbox's borderColor property to make its border visible when hovering over it. Because according to the Fabric.js documentation, the borderColor property is Color of controlling borders of an object (when it’s active!!!).
+  // It is not working by changing the unselected textbox's borderColor property to make its border visible when hovering over it. Because according to the Fabric.js documentation, the borderColor property is Color of controlling borders of an object (when it's active!!!).
   //
   // const [originalBorderColor, setOriginalBorderColor] =
   //   useState<string>(DEFAULT_BORDER_COLOR);
