@@ -3,6 +3,8 @@
 import { Canvas, FabricImage, Textbox } from 'fabric';
 import { useEffect, useRef, useState } from 'react';
 
+import { defaultTextProps, TextToolbar } from '../components/TextToolbar';
+
 const FABRIC_TEXT_TYPE_ARRAY = ['textbox', 'i-text', 'text'];
 const FABRIC_IMAGE_TYPE_ARRAY = ['image'];
 
@@ -13,13 +15,6 @@ export default function Page(): JSX.Element {
   const [showImageToolbar, setShowImageToolbar] = useState(false);
   const [showUndoHint, setShowUndoHint] = useState(false);
   console.log('showImageToolbar', showImageToolbar);
-  const defaultTextProps = {
-    fontFamily: 'Impact',
-    fontSize: 48,
-    fill: '#ffffff',
-    fontWeight: 'normal',
-    underline: false,
-  };
 
   const [textProps, setTextProps] = useState(defaultTextProps);
 
@@ -239,22 +234,6 @@ export default function Page(): JSX.Element {
     fabricCanvas.current.renderAll();
   };
 
-  // Helper to get common properties or defaults
-  const getTextProperty = (property: string): any => {
-    if (property === 'fontFamily') {
-      return textProps.fontFamily;
-    } else if (property === 'fontSize') {
-      return textProps.fontSize;
-    } else if (property === 'fill') {
-      return textProps.fill;
-    } else if (property === 'fontWeight') {
-      return textProps.fontWeight;
-    } else if (property === 'underline') {
-      return textProps.underline;
-    }
-    return undefined;
-  };
-
   const handleAddText = () => {
     if (!fabricCanvas.current) return;
     const text = new Textbox('Edit me', {
@@ -404,87 +383,10 @@ export default function Page(): JSX.Element {
     <main className='flex min-h-screen p-8 gap-8'>
       {/* Text Formatting Toolbar - Only shown when text is selected */}
       {showTextToolbar && (
-        <div className='fixed top-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-2 flex items-center gap-4 z-10'>
-          {/* Font Family Selector */}
-          <select
-            value={getTextProperty('fontFamily')}
-            onChange={(e) => updateTextProperty('fontFamily', e.target.value)}
-            className='border rounded px-2 py-1'
-          >
-            <option value='Open Sans'>Open Sans</option>
-            <option value='Impact'>Impact</option>
-            <option value='Arial'>Arial</option>
-            <option value='Times New Roman'>Times New Roman</option>
-          </select>
-
-          {/* Font Size Input */}
-          <div className='flex items-center gap-2'>
-            <button
-              onClick={() =>
-                updateTextProperty(
-                  'fontSize',
-                  Math.max(1, getTextProperty('fontSize') - 2),
-                )
-              }
-              className='px-2 hover:bg-gray-100 rounded'
-            >
-              -
-            </button>
-            <input
-              type='number'
-              value={getTextProperty('fontSize')}
-              onChange={(e) =>
-                updateTextProperty(
-                  'fontSize',
-                  Math.max(1, parseInt(e.target.value) || 1),
-                )
-              }
-              className='w-16 border rounded px-2 py-1'
-            />
-            <button
-              onClick={() =>
-                updateTextProperty('fontSize', getTextProperty('fontSize') + 2)
-              }
-              className='px-2 hover:bg-gray-100 rounded'
-            >
-              +
-            </button>
-          </div>
-
-          {/* Text Color Picker */}
-          <input
-            type='color'
-            value={getTextProperty('fill')}
-            onChange={(e) => updateTextProperty('fill', e.target.value)}
-            className='w-8 h-8'
-          />
-
-          {/* Bold Toggle */}
-          <button
-            onClick={() =>
-              updateTextProperty(
-                'fontWeight',
-                getTextProperty('fontWeight') === 'bold' ? 'normal' : 'bold',
-              )
-            }
-            className={`px-2 py-1 rounded ${getTextProperty('fontWeight') === 'bold' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
-          >
-            B
-          </button>
-
-          {/* Underline Toggle */}
-          <button
-            onClick={() =>
-              updateTextProperty(
-                'underline',
-                getTextProperty('underline') === true ? false : true,
-              )
-            }
-            className={`px-2 py-1 rounded ${getTextProperty('underline') === true ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
-          >
-            U
-          </button>
-        </div>
+        <TextToolbar
+          textProps={textProps}
+          updateTextProperty={updateTextProperty}
+        />
       )}
 
       {/* Canvas Section */}
