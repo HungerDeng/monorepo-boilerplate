@@ -13,13 +13,15 @@ export default function Page(): JSX.Element {
   const [showImageToolbar, setShowImageToolbar] = useState(false);
   const [showUndoHint, setShowUndoHint] = useState(false);
   console.log('showImageToolbar', showImageToolbar);
-  const [textProps, setTextProps] = useState({
+  const defaultTextProps = {
     fontFamily: 'Impact',
     fontSize: 48,
     fill: '#ffffff',
     fontWeight: 'normal',
     underline: false,
-  });
+  };
+
+  const [textProps, setTextProps] = useState(defaultTextProps);
 
   // Change state type to array of arrays
   const [deletedObjects, setDeletedObjects] = useState<any[][]>([]);
@@ -129,22 +131,13 @@ export default function Page(): JSX.Element {
     if (selectedObjects.length === 0) {
       setShowTextToolbar(false);
       setShowImageToolbar(false);
+      setTextProps(defaultTextProps);
       return;
     }
 
     // Get the target object that triggered the selection event
     const targetObject = e.selected?.[e.selected.length - 1];
     if (!targetObject) return;
-
-    // If there's only one object selected, show the appropriate toolbar
-    if (selectedObjects.length === 1) {
-      if (FABRIC_TEXT_TYPE_ARRAY.includes(targetObject.type)) {
-        showTextToolbarFun();
-      } else if (FABRIC_IMAGE_TYPE_ARRAY.includes(targetObject.type)) {
-        showImageToolbarFun();
-      }
-      return;
-    }
 
     // For multiple selections, check if they're all the same type
     const firstObjectType = selectedObjects[0].type;
@@ -171,6 +164,25 @@ export default function Page(): JSX.Element {
       } else if (FABRIC_IMAGE_TYPE_ARRAY.includes(firstObjectType)) {
         showImageToolbarFun();
       }
+    }
+
+    // restore the lastest properties of the selected text objects
+    const finalSelectedObjects = fabricCanvas.current.getActiveObjects();
+    const textObjects = finalSelectedObjects.filter((obj) =>
+      FABRIC_TEXT_TYPE_ARRAY.includes(obj.type),
+    ) as Textbox[];
+    if (textObjects.length === 0) {
+      setTextProps(defaultTextProps);
+    } else {
+      // TODO: need to check if all the text objects have the same properties
+      const firstTextbox = textObjects[0];
+      setTextProps({
+        fontFamily: firstTextbox.get('fontFamily'),
+        fontSize: firstTextbox.get('fontSize'),
+        fill: firstTextbox.get('fill'),
+        fontWeight: firstTextbox.get('fontWeight'),
+        underline: firstTextbox.get('underline'),
+      });
     }
   };
 
@@ -223,8 +235,24 @@ export default function Page(): JSX.Element {
         obj.set({ [property]: value });
       }
     });
-    setTextProps((prev) => ({ ...prev, [property]: value }));
+    setTextProps({ ...textProps, [property]: value });
     fabricCanvas.current.renderAll();
+  };
+
+  // Helper to get common properties or defaults
+  const getTextProperty = (property: string): any => {
+    if (property === 'fontFamily') {
+      return textProps.fontFamily;
+    } else if (property === 'fontSize') {
+      return textProps.fontSize;
+    } else if (property === 'fill') {
+      return textProps.fill;
+    } else if (property === 'fontWeight') {
+      return textProps.fontWeight;
+    } else if (property === 'underline') {
+      return textProps.underline;
+    }
+    return undefined;
   };
 
   const handleAddText = () => {
@@ -379,7 +407,7 @@ export default function Page(): JSX.Element {
         <div className='fixed top-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-2 flex items-center gap-4 z-10'>
           {/* Font Family Selector */}
           <select
-            value={textProps.fontFamily}
+            value={getTextProperty('fontFamily')}
             onChange={(e) => updateTextProperty('fontFamily', e.target.value)}
             className='border rounded px-2 py-1'
           >
@@ -395,7 +423,7 @@ export default function Page(): JSX.Element {
               onClick={() =>
                 updateTextProperty(
                   'fontSize',
-                  Math.max(1, textProps.fontSize - 2),
+                  Math.max(1, getTextProperty('fontSize') - 2),
                 )
               }
               className='px-2 hover:bg-gray-100 rounded'
@@ -404,7 +432,7 @@ export default function Page(): JSX.Element {
             </button>
             <input
               type='number'
-              value={textProps.fontSize}
+              value={getTextProperty('fontSize')}
               onChange={(e) =>
                 updateTextProperty(
                   'fontSize',
@@ -415,7 +443,7 @@ export default function Page(): JSX.Element {
             />
             <button
               onClick={() =>
-                updateTextProperty('fontSize', textProps.fontSize + 2)
+                updateTextProperty('fontSize', getTextProperty('fontSize') + 2)
               }
               className='px-2 hover:bg-gray-100 rounded'
             >
@@ -426,7 +454,7 @@ export default function Page(): JSX.Element {
           {/* Text Color Picker */}
           <input
             type='color'
-            value={textProps.fill}
+            value={getTextProperty('fill')}
             onChange={(e) => updateTextProperty('fill', e.target.value)}
             className='w-8 h-8'
           />
@@ -436,10 +464,10 @@ export default function Page(): JSX.Element {
             onClick={() =>
               updateTextProperty(
                 'fontWeight',
-                textProps.fontWeight === 'bold' ? 'normal' : 'bold',
+                getTextProperty('fontWeight') === 'bold' ? 'normal' : 'bold',
               )
             }
-            className={`px-2 py-1 rounded ${textProps.fontWeight === 'bold' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+            className={`px-2 py-1 rounded ${getTextProperty('fontWeight') === 'bold' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
           >
             B
           </button>
@@ -447,9 +475,12 @@ export default function Page(): JSX.Element {
           {/* Underline Toggle */}
           <button
             onClick={() =>
-              updateTextProperty('underline', !textProps.underline)
+              updateTextProperty(
+                'underline',
+                getTextProperty('underline') === true ? false : true,
+              )
             }
-            className={`px-2 py-1 rounded ${textProps.underline ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+            className={`px-2 py-1 rounded ${getTextProperty('underline') === true ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
           >
             U
           </button>
