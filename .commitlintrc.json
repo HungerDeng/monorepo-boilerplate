@@ -15,7 +15,8 @@
         "perf",
         "test",
         "chore",
-        "revert"
+        "revert",
+        "todo"
       ]
     ],
     "body-max-line-length": [0]
