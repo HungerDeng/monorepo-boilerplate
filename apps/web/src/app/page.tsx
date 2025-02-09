@@ -223,15 +223,21 @@ export default function Page(): JSX.Element {
   };
 
   // Update properties for all selected texts
-  const updateTextProperty = (property: string, value: any) => {
+  const updateTextProperties = (updates: Record<string, any>) => {
     if (!fabricCanvas.current) return;
 
     fabricCanvas.current.getActiveObjects().forEach((obj) => {
       if (FABRIC_TEXT_TYPE_ARRAY.includes(obj.type)) {
-        obj.set({ [property]: value });
+        Object.entries(updates).forEach(([property, value]) => {
+          obj.set({ [property]: value });
+        });
       }
     });
-    setTextProps({ ...textProps, [property]: value });
+
+    setTextProps((prev) => ({
+      ...prev,
+      ...updates,
+    }));
     fabricCanvas.current.renderAll();
   };
 
@@ -405,7 +411,7 @@ export default function Page(): JSX.Element {
       {showTextToolbar && (
         <TextToolbar
           textProps={textProps}
-          updateTextProperty={updateTextProperty}
+          updateTextProperties={updateTextProperties}
         />
       )}
 

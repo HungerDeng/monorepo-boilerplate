@@ -8,35 +8,19 @@ export const defaultTextProps = {
 
 interface TextToolbarProps {
   textProps: typeof defaultTextProps;
-  updateTextProperty: (property: string, value: any) => void;
+  updateTextProperties: (updates: Record<string, any>) => void;
 }
 
 export function TextToolbar({
   textProps,
-  updateTextProperty,
+  updateTextProperties,
 }: TextToolbarProps) {
-  // Helper to get common properties or defaults
-  const getTextProperty = (property: string): any => {
-    if (property === 'fontFamily') {
-      return textProps.fontFamily;
-    } else if (property === 'fontSize') {
-      return textProps.fontSize;
-    } else if (property === 'fill') {
-      return textProps.fill;
-    } else if (property === 'fontWeight') {
-      return textProps.fontWeight;
-    } else if (property === 'underline') {
-      return textProps.underline;
-    }
-    return undefined;
-  };
-
   return (
     <div className='fixed top-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-2 flex items-center gap-4 z-10'>
       {/* Font Family Selector */}
       <select
-        value={getTextProperty('fontFamily')}
-        onChange={(e) => updateTextProperty('fontFamily', e.target.value)}
+        value={textProps.fontFamily}
+        onChange={(e) => updateTextProperties({ fontFamily: e.target.value })}
         className='border rounded px-2 py-1'
       >
         <option value='Open Sans'>Open Sans</option>
@@ -49,10 +33,9 @@ export function TextToolbar({
       <div className='flex items-center gap-2'>
         <button
           onClick={() =>
-            updateTextProperty(
-              'fontSize',
-              Math.max(1, getTextProperty('fontSize') - 2),
-            )
+            updateTextProperties({
+              fontSize: Math.max(1, textProps.fontSize - 2),
+            })
           }
           className='px-2 hover:bg-gray-100 rounded'
         >
@@ -60,18 +43,19 @@ export function TextToolbar({
         </button>
         <input
           type='number'
-          value={getTextProperty('fontSize')}
+          value={textProps.fontSize}
           onChange={(e) =>
-            updateTextProperty(
-              'fontSize',
-              Math.max(1, parseInt(e.target.value) || 1),
-            )
+            updateTextProperties({
+              fontSize: Math.max(1, parseInt(e.target.value) || 1),
+            })
           }
           className='w-16 border rounded px-2 py-1'
         />
         <button
           onClick={() =>
-            updateTextProperty('fontSize', getTextProperty('fontSize') + 2)
+            updateTextProperties({
+              fontSize: textProps.fontSize + 2,
+            })
           }
           className='px-2 hover:bg-gray-100 rounded'
         >
@@ -82,20 +66,19 @@ export function TextToolbar({
       {/* Text Color Picker */}
       <input
         type='color'
-        value={getTextProperty('fill')}
-        onChange={(e) => updateTextProperty('fill', e.target.value)}
+        value={textProps.fill}
+        onChange={(e) => updateTextProperties({ fill: e.target.value })}
         className='w-8 h-8'
       />
 
       {/* Bold Toggle */}
       <button
         onClick={() =>
-          updateTextProperty(
-            'fontWeight',
-            getTextProperty('fontWeight') === 'bold' ? 'normal' : 'bold',
-          )
+          updateTextProperties({
+            fontWeight: textProps.fontWeight === 'bold' ? 'normal' : 'bold',
+          })
         }
-        className={`px-2 py-1 rounded ${getTextProperty('fontWeight') === 'bold' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+        className={`px-2 py-1 rounded ${textProps.fontWeight === 'bold' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
       >
         B
       </button>
@@ -103,18 +86,18 @@ export function TextToolbar({
       {/* Underline Toggle */}
       <button
         onClick={() =>
-          updateTextProperty('underline', !getTextProperty('underline'))
+          updateTextProperties({
+            underline: !textProps.underline,
+          })
         }
-        className={`px-2 py-1 rounded ${getTextProperty('underline') ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+        className={`px-2 py-1 rounded ${textProps.underline ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
       >
         U
       </button>
 
       {/* Reset to Defaults */}
       <button
-        onClick={() =>
-          updateTextProperty('fontFamily', defaultTextProps.fontFamily)
-        }
+        onClick={() => updateTextProperties(defaultTextProps)}
         className='px-2 py-1 rounded hover:bg-gray-100 text-sm'
       >
         Reset
