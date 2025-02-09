@@ -218,17 +218,25 @@ export default function Page(): JSX.Element {
       const img = await FabricImage.fromURL(
         event.target?.result as string,
         {},
-        // TODO: adjust image size to fit canvas
-        (img: any) => {
-          // Scale image to fit canvas if needed
-          img.scaleToWidth(fabricCanvas.current!.width * 0.8);
-          img.set({
-            left: fabricCanvas.current!.width / 2,
-            top: fabricCanvas.current!.height / 2,
-            originX: 'center',
-            originY: 'center',
-          });
+        {
+          scaleToWidth: fabricCanvas.current!.width * 0.8,
+          left: fabricCanvas.current!.width / 2,
+          top: fabricCanvas.current!.height / 2,
+          originX: 'center',
+          originY: 'center',
+          borderScaleFactor: 2, // the bigger number, the thicker border
         },
+        // TODO: adjust image size to fit canvas
+        // (img: any) => {
+        //   // Scale image to fit canvas if needed
+        //   img.scaleToWidth(fabricCanvas.current!.width * 0.8);
+        //   img.set({
+        //     left: fabricCanvas.current!.width / 2,
+        //     top: fabricCanvas.current!.height / 2,
+        //     originX: 'center',
+        //     originY: 'center',
+        //   });
+        // },
       );
       // reference: https://github.com/fabricjs/fabric.js/discussions/7797#discussioncomment-2958064
       // UX effect: when hovering over the image, its border becomes visible even if it is not selected.
