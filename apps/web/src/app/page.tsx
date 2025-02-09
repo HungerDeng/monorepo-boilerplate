@@ -20,6 +20,9 @@ export default function Page(): JSX.Element {
     underline: false,
   });
 
+  // Add state for tracking deletion history
+  const [deletedObjects, setDeletedObjects] = useState<any[]>([]);
+
   // Initialize Fabric.js canvas with selection events
   useEffect(() => {
     if (canvasRef.current === null) return;
@@ -37,26 +40,6 @@ export default function Page(): JSX.Element {
     canvas.on('selection:updated', handleSelection);
     canvas.on('selection:cleared', handleSelectionCleared);
 
-    // Add keyboard event listener for delete functionality
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!canvas) return;
-      // Check if Delete or Backspace key is pressed
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        const activeObjects = canvas.getActiveObjects();
-        if (activeObjects.length > 0) {
-          canvas.remove(...activeObjects);
-          canvas.discardActiveObject();
-          canvas.requestRenderAll();
-          // Hide toolbars when objects are deleted
-          setShowTextToolbar(false);
-          setShowImageToolbar(false);
-        }
-      }
-    };
-
-    // Add event listener
-    window.addEventListener('keydown', handleKeyDown);
-
     // Enable shift key selection
     canvas.set('selection', {
       multiple: true,
@@ -67,10 +50,52 @@ export default function Page(): JSX.Element {
       canvas.off('selection:created', handleSelection);
       canvas.off('selection:updated', handleSelection);
       canvas.off('selection:cleared', handleSelectionCleared);
-      // Remove event listener on cleanup
-      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  // Initialize the event listener for the keyboard event
+  useEffect(() => {
+    // Add keyboard event listener for delete and undo functionality
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!fabricCanvas.current) return;
+
+      // Delete functionality
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        const activeObjects = fabricCanvas.current.getActiveObjects();
+        if (activeObjects.length > 0) {
+          // Store deleted objects in state
+          setDeletedObjects((prev) => [...prev, ...activeObjects]);
+          fabricCanvas.current.remove(...activeObjects);
+          fabricCanvas.current.discardActiveObject();
+          fabricCanvas.current.requestRenderAll();
+          setShowTextToolbar(false);
+          setShowImageToolbar(false);
+        }
+      }
+
+      // Improved undo functionality
+      if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
+        if (deletedObjects.length > 0) {
+          // Get the last deleted object(s)
+          const objectsToRestore = deletedObjects[deletedObjects.length - 1];
+
+          // Remove the restored object from deletion history
+          setDeletedObjects((prev) => prev.slice(0, -1));
+
+          // Add the object back to canvas
+          fabricCanvas.current.add(objectsToRestore);
+          fabricCanvas.current.requestRenderAll();
+        }
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [deletedObjects]);
 
   const showTextToolbarFun = () => {
     setShowTextToolbar(true);
