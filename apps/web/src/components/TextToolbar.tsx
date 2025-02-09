@@ -19,6 +19,7 @@ export function TextToolbar({
     <div className='fixed top-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-2 flex items-center gap-4 z-10'>
       {/* Font Family Selector */}
       <select
+        title='Change font family'
         value={textProps.fontFamily}
         onChange={(e) => updateTextProperties({ fontFamily: e.target.value })}
         className='border rounded px-2 py-1'
@@ -32,6 +33,7 @@ export function TextToolbar({
       {/* Font Size Input */}
       <div className='flex items-center gap-2'>
         <button
+          title='Decrease font size'
           onClick={() =>
             updateTextProperties({
               fontSize: Math.max(1, textProps.fontSize - 2),
@@ -42,6 +44,7 @@ export function TextToolbar({
           -
         </button>
         <input
+          title='Font size'
           type='number'
           value={textProps.fontSize}
           onChange={(e) =>
@@ -52,6 +55,7 @@ export function TextToolbar({
           className='w-16 border rounded px-2 py-1'
         />
         <button
+          title='Increase font size'
           onClick={() =>
             updateTextProperties({
               fontSize: textProps.fontSize + 2,
@@ -65,6 +69,7 @@ export function TextToolbar({
 
       {/* Text Color Picker */}
       <input
+        title='Text color'
         type='color'
         value={textProps.fill}
         onChange={(e) => updateTextProperties({ fill: e.target.value })}
@@ -73,6 +78,7 @@ export function TextToolbar({
 
       {/* Bold Toggle */}
       <button
+        title='Bold'
         onClick={() =>
           updateTextProperties({
             fontWeight: textProps.fontWeight === 'bold' ? 'normal' : 'bold',
@@ -85,6 +91,7 @@ export function TextToolbar({
 
       {/* Underline Toggle */}
       <button
+        title='Underline'
         onClick={() =>
           updateTextProperties({
             underline: !textProps.underline,
@@ -97,6 +104,7 @@ export function TextToolbar({
 
       {/* Reset to Defaults */}
       <button
+        title='Reset to default settings'
         onClick={() => updateTextProperties(defaultTextProps)}
         className='px-2 py-1 rounded hover:bg-gray-100 text-sm'
       >

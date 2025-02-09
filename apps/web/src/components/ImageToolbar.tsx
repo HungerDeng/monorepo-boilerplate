@@ -20,6 +20,7 @@ export function ImageToolbar({
       <div className='flex items-center gap-2'>
         <span className='text-sm'>BGColor:</span>
         <input
+          title='Background color'
           type='color'
           value={imageProps.backgroundColor}
           onChange={(e) =>
@@ -34,6 +35,7 @@ export function ImageToolbar({
       {/* Flip Controls */}
       <div className='flex gap-2'>
         <button
+          title='Flip horizontally'
           onClick={() =>
             updateImageProperties({
               flipX: !imageProps.flipX,
@@ -44,6 +46,7 @@ export function ImageToolbar({
           ↔️ Flip X
         </button>
         <button
+          title='Flip vertically'
           onClick={() =>
             updateImageProperties({
               flipY: !imageProps.flipY,
@@ -59,6 +62,7 @@ export function ImageToolbar({
       <div className='flex items-center gap-2 w-32'>
         <span className='text-sm'>Opacity:</span>
         <input
+          title='Opacity'
           type='range'
           min='0'
           max='1'
@@ -75,6 +79,7 @@ export function ImageToolbar({
 
       {/* Reset to Defaults */}
       <button
+        title='Reset to default settings'
         onClick={() => {
           updateImageProperties(defaultImageProps);
         }}
