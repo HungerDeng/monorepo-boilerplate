@@ -64,6 +64,16 @@ export default function Page(): JSX.Element {
       if (e.key === 'Delete' || e.key === 'Backspace') {
         const activeObjects = fabricCanvas.current.getActiveObjects();
         if (activeObjects.length > 0) {
+          // Prevent deletion if any text object is being edited
+          if (
+            activeObjects.some(
+              (obj) =>
+                obj.type === 'textbox' && (obj as Textbox).isEditing === true,
+            )
+          ) {
+            return;
+          }
+
           // Store as a single array in the history
           setDeletedObjects((prev) => [...prev, activeObjects]);
           fabricCanvas.current.remove(...activeObjects);
