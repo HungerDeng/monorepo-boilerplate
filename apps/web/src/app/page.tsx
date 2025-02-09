@@ -230,6 +230,14 @@ export default function Page(): JSX.Element {
       if (FABRIC_TEXT_TYPE_ARRAY.includes(obj.type)) {
         Object.entries(updates).forEach(([property, value]) => {
           obj.set({ [property]: value });
+          if (property === 'uppercase') {
+            if (value) {
+              obj.set('text', obj.get('text').toUpperCase());
+            } else {
+              // TODO: undo the uppercase operation will lose the original text, need to store the original text. But it's not a pain point now.
+              obj.set('text', obj.get('text').toLowerCase());
+            }
+          }
         });
       }
     });

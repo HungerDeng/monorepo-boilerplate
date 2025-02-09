@@ -2,8 +2,15 @@ export const defaultTextProps = {
   fontFamily: 'Impact',
   fontSize: 48,
   fill: '#ffffff',
-  fontWeight: 'normal',
+  fontWeight: 'normal', // bold or normal
+  fontStyle: 'normal', // italic or normal
   underline: false,
+  linethrough: false, // strikethrough
+  uppercase: false,
+  textAlign: 'left', // left, center, right
+  charSpacing: 0, // letter spacing: -200 to 400
+  lineHeight: 1.2, // line spacing: 0.5 to 2.5
+  opacity: 1, // opacity: 0 to 1
 };
 
 interface TextToolbarProps {
@@ -89,6 +96,19 @@ export function TextToolbar({
         B
       </button>
 
+      {/* Italic Toggle */}
+      <button
+        title='Italic'
+        onClick={() =>
+          updateTextProperties({
+            fontStyle: textProps.fontStyle === 'italic' ? 'normal' : 'italic',
+          })
+        }
+        className={`px-2 py-1 rounded ${textProps.fontStyle === 'italic' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+      >
+        I
+      </button>
+
       {/* Underline Toggle */}
       <button
         title='Underline'
@@ -101,6 +121,104 @@ export function TextToolbar({
       >
         U
       </button>
+
+      {/* Strikethrough Toggle */}
+      <button
+        title='Strikethrough'
+        onClick={() =>
+          updateTextProperties({
+            linethrough: !textProps.linethrough,
+          })
+        }
+        className={`px-2 py-1 rounded ${textProps.linethrough ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+      >
+        S
+      </button>
+
+      {/* Uppercase Toggle */}
+      <button
+        title='Uppercase'
+        onClick={() =>
+          updateTextProperties({
+            uppercase: !textProps.uppercase,
+          })
+        }
+        className={`px-2 py-1 rounded ${textProps.uppercase ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+      >
+        Aa
+      </button>
+
+      {/* Text Alignment */}
+      <div className='flex gap-1'>
+        <button
+          title='Align left'
+          onClick={() => updateTextProperties({ textAlign: 'left' })}
+          className={`px-2 py-1 rounded ${textProps.textAlign === 'left' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+        >
+          ←
+        </button>
+        <button
+          title='Center align'
+          onClick={() => updateTextProperties({ textAlign: 'center' })}
+          className={`px-2 py-1 rounded ${textProps.textAlign === 'center' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+        >
+          ↔
+        </button>
+        <button
+          title='Align right'
+          onClick={() => updateTextProperties({ textAlign: 'right' })}
+          className={`px-2 py-1 rounded ${textProps.textAlign === 'right' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+        >
+          →
+        </button>
+      </div>
+
+      {/* Spacing Controls */}
+      <div className='flex gap-2'>
+        <input
+          title='Letter spacing'
+          type='range'
+          value={textProps.charSpacing}
+          onChange={(e) =>
+            updateTextProperties({ charSpacing: parseFloat(e.target.value) })
+          }
+          className='w-16 border rounded px-2 py-1'
+          min='-200'
+          max='400'
+          step='1'
+          defaultValue='0'
+        />
+        <input
+          title='Line spacing'
+          type='range'
+          value={textProps.lineHeight}
+          onChange={(e) =>
+            updateTextProperties({ lineHeight: parseFloat(e.target.value) })
+          }
+          className='w-16 border rounded px-2 py-1'
+          min='0.5'
+          max='2.5'
+          step='0.01'
+          defaultValue='1.05'
+        />
+      </div>
+
+      {/* Opacity Control */}
+      <div className='flex items-center gap-2'>
+        <span className='text-sm'>Opacity:</span>
+        <input
+          title='Text opacity'
+          type='range'
+          min='0'
+          max='1'
+          step='0.1'
+          value={textProps.opacity}
+          onChange={(e) =>
+            updateTextProperties({ opacity: parseFloat(e.target.value) })
+          }
+          className='w-24'
+        />
+      </div>
 
       {/* Reset to Defaults */}
       <button
