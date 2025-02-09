@@ -37,6 +37,26 @@ export default function Page(): JSX.Element {
     canvas.on('selection:updated', handleSelection);
     canvas.on('selection:cleared', handleSelectionCleared);
 
+    // Add keyboard event listener for delete functionality
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!canvas) return;
+      // Check if Delete or Backspace key is pressed
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        const activeObjects = canvas.getActiveObjects();
+        if (activeObjects.length > 0) {
+          canvas.remove(...activeObjects);
+          canvas.discardActiveObject();
+          canvas.requestRenderAll();
+          // Hide toolbars when objects are deleted
+          setShowTextToolbar(false);
+          setShowImageToolbar(false);
+        }
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('keydown', handleKeyDown);
+
     // Enable shift key selection
     canvas.set('selection', {
       multiple: true,
@@ -47,6 +67,8 @@ export default function Page(): JSX.Element {
       canvas.off('selection:created', handleSelection);
       canvas.off('selection:updated', handleSelection);
       canvas.off('selection:cleared', handleSelectionCleared);
+      // Remove event listener on cleanup
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
