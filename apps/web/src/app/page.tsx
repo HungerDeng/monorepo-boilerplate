@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Toaster } from '~*/components/ui/toaster';
 import { useToast } from '~*/hooks/use-toast';
 
-import { defaultImageProps, ImageToolbar } from '../components/ImageToolbar';
-import { defaultTextProps, TextToolbar } from '../components/TextToolbar';
+import { defaultImageProps, ImageToolbar } from '../components/image-toolbar';
+import { defaultTextProps, TextToolbar } from '../components/text-toolbar';
 
 const FABRIC_TEXT_TYPE_ARRAY = ['textbox', 'i-text', 'text'];
 const FABRIC_IMAGE_TYPE_ARRAY = ['image'];
