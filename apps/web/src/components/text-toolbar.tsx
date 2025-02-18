@@ -1,10 +1,17 @@
 import { TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
+import { SketchPicker } from 'react-color';
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '~*/components/ui/popover';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '~*/components/ui/tabs';
 import { Tooltip, TooltipContent } from '~*/components/ui/tooltip';
 
 export const defaultTextProps = {
@@ -26,6 +33,75 @@ interface TextToolbarProps {
   textProps: typeof defaultTextProps;
   updateTextProperties: (updates: Record<string, any>) => void;
 }
+
+interface TextColorPickerProps {
+  textColor: string;
+  updateTextColorCallback: (color: string) => void;
+}
+
+const TextColorPicker = ({
+  textColor,
+  updateTextColorCallback,
+}: TextColorPickerProps) => {
+  return (
+    <div className='flex flex-col gap-4 p-2'>
+      <div className='grid grid-cols-4 gap-1'>
+        {[
+          '#abcdfg',
+          '#D0021B',
+          '#F5A623',
+          '#F8E71C',
+          '#8B572A',
+          '#7ED321',
+          '#417505',
+          '#BD10E0',
+          '#9013FE',
+          '#4A90E2',
+          '#50E3C2',
+          '#B8E986',
+          '#000000',
+          '#4A4A4A',
+          '#9B9B9B',
+          '#FFFFFF',
+        ].map((color, index) => (
+          <div
+            key={color}
+            onClick={() => {
+              if (index === 0) return;
+              updateTextColorCallback(color);
+            }}
+            className='relative w-10 h-10 rounded-full cursor-pointer'
+            style={{
+              backgroundColor: index === 0 ? '#FFFFFF' : color,
+              border: '2px solid white',
+              boxShadow:
+                color === textColor ? '0 0 0 2px #000' : '0 0 0 1px #ddd',
+            }}
+          >
+            {index === 0 && (
+              <Popover>
+                <PopoverTrigger
+                  asChild
+                  className='absolute inset-0 flex items-center justify-center'
+                >
+                  <span className='text-2xl text-gray-600'>+</span>
+                </PopoverTrigger>
+                <PopoverContent className='max-w-fit p-0 m-0'>
+                  <SketchPicker
+                    color={textColor}
+                    onChangeComplete={(color: any) =>
+                      updateTextColorCallback(color.hex)
+                    }
+                  />
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export function TextToolbar({
   textProps,
@@ -216,36 +292,64 @@ export function TextToolbar({
               color
             </button>
           </PopoverTrigger>
-          <PopoverContent>
-            <label className='block text-sm font-medium'>
-              background
-              <input
-                type='color'
-                value={textProps.fill}
-                onChange={(e) => updateTextProperties({ fill: e.target.value })}
-                className='w-8 h-8'
-              />
-            </label>
+          <PopoverContent className='w-auto p-1'>
+            <Tabs defaultValue='text' className='w-[400px]'>
+              <TabsList>
+                <TabsTrigger value='text'>Text</TabsTrigger>
+                <TabsTrigger value='outline'>Outline</TabsTrigger>
+                <TabsTrigger value='shadow'>Shadow</TabsTrigger>
+                <TabsTrigger value='background'>Background</TabsTrigger>
+              </TabsList>
 
-            <label className='block text-sm font-medium'>
-              textcolor
-              <input
-                type='color'
-                value={textProps.fill}
-                onChange={(e) => updateTextProperties({ fill: e.target.value })}
-                className='w-8 h-8'
-              />
-            </label>
+              <TabsContent value='text'>
+                <TextColorPicker
+                  textColor={textProps.fill}
+                  updateTextColorCallback={(color) =>
+                    updateTextProperties({ fill: color })
+                  }
+                />
+              </TabsContent>
 
-            <label className='block text-sm font-medium'>
-              stroke
-              <input
-                type='color'
-                value={textProps.fill}
-                onChange={(e) => updateTextProperties({ fill: e.target.value })}
-                className='w-8 h-8'
-              />
-            </label>
+              <TabsContent value='outline'>
+                <label className='block text-sm font-medium'>
+                  Outline
+                  <input
+                    type='color'
+                    value={textProps.fill}
+                    onChange={(e) =>
+                      updateTextProperties({ fill: e.target.value })
+                    }
+                    className='w-8 h-8'
+                  />
+                </label>
+              </TabsContent>
+              <TabsContent value='shadow'>
+                <label className='block text-sm font-medium'>
+                  Shadow
+                  <input
+                    type='color'
+                    value={textProps.fill}
+                    onChange={(e) =>
+                      updateTextProperties({ fill: e.target.value })
+                    }
+                    className='w-8 h-8'
+                  />
+                </label>
+              </TabsContent>
+              <TabsContent value='background'>
+                <label className='block text-sm font-medium'>
+                  Background
+                  <input
+                    type='color'
+                    value={textProps.fill}
+                    onChange={(e) =>
+                      updateTextProperties({ fill: e.target.value })
+                    }
+                    className='w-8 h-8'
+                  />
+                </label>
+              </TabsContent>
+            </Tabs>
           </PopoverContent>
         </Popover>
 
