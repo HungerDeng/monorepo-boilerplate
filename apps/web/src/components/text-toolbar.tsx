@@ -53,6 +53,7 @@ export const defaultTextProps = {
 
 interface TextToolbarProps {
   textProps: typeof defaultTextProps;
+  deleteTextCallback: () => void;
   updateTextProperties: (updates: Record<string, any>) => void;
 }
 
@@ -151,6 +152,7 @@ const fonts = [
 export function TextToolbar({
   textProps,
   updateTextProperties,
+  deleteTextCallback,
 }: TextToolbarProps) {
   const [fontFamilyOpen, setFontFamilyOpen] = useState(false);
 
@@ -684,6 +686,20 @@ export function TextToolbar({
           </TooltipTrigger>
           <TooltipContent>
             <p>Reset to default settings</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={deleteTextCallback}
+              className='px-2 py-1 rounded hover:bg-gray-100 text-sm'
+            >
+              Delete
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Delete</p>
           </TooltipContent>
         </Tooltip>
       </div>

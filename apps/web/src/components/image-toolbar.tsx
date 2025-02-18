@@ -12,11 +12,13 @@ export const defaultImageProps = {
 interface ImageToolbarProps {
   imageProps: typeof defaultImageProps;
   updateImageProperties: (updates: Record<string, any>) => void;
+  deleteImageCallback: () => void;
 }
 
 export function ImageToolbar({
   imageProps,
   updateImageProperties,
+  deleteImageCallback,
 }: ImageToolbarProps) {
   return (
     <TooltipProvider>
@@ -120,6 +122,22 @@ export function ImageToolbar({
           </TooltipTrigger>
           <TooltipContent>
             <p>Reset to default settings</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                deleteImageCallback();
+              }}
+              className='px-2 py-1 rounded hover:bg-gray-100 text-sm'
+            >
+              Delete
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Delete</p>
           </TooltipContent>
         </Tooltip>
       </div>

@@ -61,29 +61,10 @@ export default function Page(): JSX.Element {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!fabricCanvas.current) return;
 
-      // Delete functionality
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        const activeObjects = fabricCanvas.current.getActiveObjects();
-        if (activeObjects.length > 0) {
-          // Prevent deletion if any text object is being edited
-          if (
-            activeObjects.some(
-              (obj) =>
-                obj.type === 'textbox' && (obj as Textbox).isEditing === true,
-            )
-          ) {
-            return;
-          }
-
-          // Store as a single array in the history
-          setDeletedObjects((prev) => [...prev, activeObjects]);
-          fabricCanvas.current.remove(...activeObjects);
-          fabricCanvas.current.discardActiveObject();
-          fabricCanvas.current.requestRenderAll();
-          setShowTextToolbar(false);
-          setShowImageToolbar(false);
-        }
-      }
+      // TODO: too many compatibility issues, so don't support delete and backspace shortcuts now. maybe in the future will support it.
+      // if (e.key === 'Delete' || e.key === 'Backspace') {
+      //   handleDelete();
+      // }
 
       // Improved undo functionality
       // TODO: need to undo the modification of the text or image properties in the long run, but it's not a high priority task now. Currently, only the undo of deletion is supported.
@@ -114,6 +95,33 @@ export default function Page(): JSX.Element {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [deletedObjects]);
+
+  const handleDelete = () => {
+    if (!fabricCanvas.current) return;
+    const activeObjects = fabricCanvas.current.getActiveObjects();
+    if (activeObjects.length > 0) {
+      // Prevent deletion if any text object is being edited
+      if (
+        activeObjects.some(
+          (obj) =>
+            obj.type === 'textbox' && (obj as Textbox).isEditing === true,
+        )
+      ) {
+        toast({
+          title: 'Cannot delete text object that is being edited',
+        });
+        return;
+      }
+
+      // Store as a single array in the history
+      setDeletedObjects((prev) => [...prev, activeObjects]);
+      fabricCanvas.current.remove(...activeObjects);
+      fabricCanvas.current.discardActiveObject();
+      fabricCanvas.current.requestRenderAll();
+      setShowTextToolbar(false);
+      setShowImageToolbar(false);
+    }
+  };
 
   const showTextToolbarFun = () => {
     setShowTextToolbar(true);
@@ -444,6 +452,7 @@ export default function Page(): JSX.Element {
       {showTextToolbar && (
         <TextToolbar
           textProps={textProps}
+          deleteTextCallback={handleDelete}
           updateTextProperties={updateTextProperties}
         />
       )}
@@ -452,6 +461,7 @@ export default function Page(): JSX.Element {
       {showImageToolbar && (
         <ImageToolbar
           imageProps={imageProps}
+          deleteImageCallback={handleDelete}
           updateImageProperties={updateImageProperties}
         />
       )}
