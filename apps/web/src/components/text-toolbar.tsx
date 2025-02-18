@@ -299,9 +299,16 @@ export function TextToolbar({
         {/* Text Color Picker */}
         <Popover>
           <PopoverTrigger asChild>
-            <button className='px-2 py-1 rounded hover:bg-gray-100'>
-              color
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className='px-2 py-1 rounded hover:bg-gray-100'>
+                  color
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Color</p>
+              </TooltipContent>
+            </Tooltip>
           </PopoverTrigger>
           <PopoverContent className='w-auto p-1'>
             <Tabs defaultValue='text'>
@@ -442,15 +449,22 @@ export function TextToolbar({
         {/* Text Alignment - Updated to Popover */}
         <Popover>
           <PopoverTrigger asChild>
-            <button
-              className={`px-2 py-1 rounded ${
-                ['left', 'center', 'right'].includes(textProps.textAlign)
-                  ? 'bg-gray-200'
-                  : 'hover:bg-gray-100'
-              }`}
-            >
-              alignment
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className={`px-2 py-1 rounded ${
+                    ['left', 'center', 'right'].includes(textProps.textAlign)
+                      ? 'bg-gray-200'
+                      : 'hover:bg-gray-100'
+                  }`}
+                >
+                  alignment
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Alignment</p>
+              </TooltipContent>
+            </Tooltip>
           </PopoverTrigger>
           <PopoverContent className='w-auto p-1'>
             <div className='flex flex-col gap-1'>
@@ -492,9 +506,16 @@ export function TextToolbar({
         <div className='flex gap-2'>
           <Popover>
             <PopoverTrigger asChild>
-              <button className='px-2 py-1 rounded hover:bg-gray-100'>
-                spacing
-              </button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className='px-2 py-1 rounded hover:bg-gray-100'>
+                    spacing
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Spacing</p>
+                </TooltipContent>
+              </Tooltip>
             </PopoverTrigger>
             <PopoverContent className='w-64 p-4'>
               <div className='space-y-4'>
@@ -549,9 +570,16 @@ export function TextToolbar({
         {/* Opacity Control */}
         <Popover>
           <PopoverTrigger asChild>
-            <button className='px-2 py-1 rounded hover:bg-gray-100'>
-              opacity
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className='px-2 py-1 rounded hover:bg-gray-100'>
+                  opacity
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Opacity</p>
+              </TooltipContent>
+            </Tooltip>
           </PopoverTrigger>
           <PopoverContent className='w-64 p-4'>
             <div className='space-y-4'>
