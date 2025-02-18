@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '~*/components/ui/popover';
+import { Separator } from '~*/components/ui/separator';
 import {
   Tabs,
   TabsContent,
@@ -55,7 +56,7 @@ const TextColorPicker = ({
 }: TextColorPickerProps) => {
   return (
     <div className='flex flex-col gap-4 p-2'>
-      <div className='grid grid-cols-4 gap-1'>
+      <div className='grid grid-cols-4 gap-1 justify-items-center'>
         {[
           '#abcdfg',
           '#D0021B',
@@ -119,7 +120,7 @@ export function TextToolbar({
 }: TextToolbarProps) {
   return (
     <TooltipProvider>
-      <div className='fixed top-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-2 flex items-center gap-4 z-10'>
+      <div className='fixed top-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-2 flex items-center gap-2 z-10'>
         {/* Font Family Selector */}
         <Tooltip>
           <TooltipTrigger asChild>
@@ -303,12 +304,44 @@ export function TextToolbar({
             </button>
           </PopoverTrigger>
           <PopoverContent className='w-auto p-1'>
-            <Tabs defaultValue='text' className='w-[400px]'>
-              <TabsList>
-                <TabsTrigger value='text'>Text</TabsTrigger>
-                <TabsTrigger value='outline'>Outline</TabsTrigger>
-                <TabsTrigger value='shadow'>Shadow</TabsTrigger>
-                <TabsTrigger value='background'>Background</TabsTrigger>
+            <Tabs defaultValue='text'>
+              <TabsList className='h-fit gap-1'>
+                <TabsTrigger value='text'>
+                  <div className='flex flex-col items-center gap-2'>
+                    <div
+                      className='w-8 h-8 rounded-md mb-0 border-2 border-gray-300'
+                      style={{ backgroundColor: textProps.fill }}
+                    />
+                    Text
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger value='outline'>
+                  <div className='flex flex-col items-center gap-2'>
+                    <div
+                      className='w-8 h-8 rounded-md mb-0 border-2 border-gray-300'
+                      style={{ backgroundColor: textProps.stroke }}
+                    />
+                    Outline
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger value='shadow'>
+                  <div className='flex flex-col items-center gap-2'>
+                    <div
+                      className='w-8 h-8 rounded-md mb-0 border-2 border-gray-300'
+                      style={{ backgroundColor: textProps.shadow.color }}
+                    />
+                    Shadow
+                  </div>
+                </TabsTrigger>
+                <TabsTrigger value='background'>
+                  <div className='flex flex-col items-center gap-2'>
+                    <div
+                      className='w-8 h-8 rounded-md mb-0 border-2 border-gray-300'
+                      style={{ backgroundColor: textProps.backgroundColor }}
+                    />
+                    Bg
+                  </div>
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value='text'>
@@ -327,6 +360,28 @@ export function TextToolbar({
                     updateTextProperties({ stroke: color })
                   }
                 />
+                <Separator className='my-4' />
+                <label className='block text-sm font-medium'>
+                  Outline Width
+                  <div className='flex items-center gap-2'>
+                    <input
+                      type='range'
+                      min='0'
+                      max='5'
+                      step='0.2'
+                      value={textProps.strokeWidth}
+                      onChange={(e) =>
+                        updateTextProperties({
+                          strokeWidth: parseFloat(e.target.value),
+                        })
+                      }
+                      className='flex-1 mt-2'
+                    />
+                    <div className='w-12 h-8 flex items-center justify-center border rounded'>
+                      {textProps.strokeWidth}
+                    </div>
+                  </div>
+                </label>
               </TabsContent>
 
               <TabsContent value='shadow'>
@@ -343,6 +398,33 @@ export function TextToolbar({
                     })
                   }
                 />
+                <Separator className='my-4' />
+                <label className='block text-sm font-medium'>
+                  Shadow Width
+                  <div className='flex items-center gap-2'>
+                    <input
+                      type='range'
+                      min='0'
+                      max='30'
+                      step='1'
+                      value={textProps.shadow.blur}
+                      onChange={(e) =>
+                        updateTextProperties({
+                          shadow: new Shadow({
+                            color: textProps.shadow.color,
+                            blur: parseFloat(e.target.value),
+                            offsetX: textProps.shadow.offsetX,
+                            offsetY: textProps.shadow.offsetY,
+                          }),
+                        })
+                      }
+                      className='flex-1 mt-2'
+                    />
+                    <div className='w-12 h-8 flex items-center justify-center border rounded'>
+                      {textProps.shadow.blur}
+                    </div>
+                  </div>
+                </label>
               </TabsContent>
 
               <TabsContent value='background'>
