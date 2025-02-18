@@ -17,7 +17,6 @@ export default function Page(): JSX.Element {
   const fabricCanvas = useRef<Canvas | null>(null);
   const [showTextToolbar, setShowTextToolbar] = useState(false);
   const [showImageToolbar, setShowImageToolbar] = useState(false);
-  const [showUndoHint, setShowUndoHint] = useState(false);
   const { toast } = useToast();
 
   const [textProps, setTextProps] = useState(defaultTextProps);
@@ -102,11 +101,8 @@ export default function Page(): JSX.Element {
         } else {
           toast({
             title: 'Nothing to undo',
-            description: 'Only deletion undo supported currently',
+            description: 'Currently, only support undoing deletion operations',
           });
-
-          setShowUndoHint(true);
-          setTimeout(() => setShowUndoHint(false), 3000);
         }
       }
     };
@@ -555,15 +551,6 @@ export default function Page(): JSX.Element {
           </div>
         </div>
       </div>
-
-      {showUndoHint && (
-        <div className='fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2'>
-          <span>⚠️ Nothing to undo</span>
-          <span className='text-xs opacity-75'>
-            (Only deletion undo supported currently)
-          </span>
-        </div>
-      )}
     </main>
   );
 }
