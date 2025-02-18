@@ -1,5 +1,10 @@
 import { TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '~*/components/ui/popover';
 import { Tooltip, TooltipContent } from '~*/components/ui/tooltip';
 
 export const defaultTextProps = {
@@ -107,21 +112,6 @@ export function TextToolbar({
           </Tooltip>
         </div>
 
-        {/* Text Color Picker */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <input
-              type='color'
-              value={textProps.fill}
-              onChange={(e) => updateTextProperties({ fill: e.target.value })}
-              className='w-8 h-8'
-            />
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Text color</p>
-          </TooltipContent>
-        </Tooltip>
-
         {/* Bold Toggle */}
         <Tooltip>
           <TooltipTrigger asChild>
@@ -219,117 +209,171 @@ export function TextToolbar({
           </TooltipContent>
         </Tooltip>
 
-        {/* Text Alignment */}
-        <div className='flex gap-1'>
-          <Tooltip>
-            <TooltipTrigger asChild>
+        {/* Text Color Picker */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className='px-2 py-1 rounded hover:bg-gray-100'>
+              color
+            </button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <label className='block text-sm font-medium'>
+              background
+              <input
+                type='color'
+                value={textProps.fill}
+                onChange={(e) => updateTextProperties({ fill: e.target.value })}
+                className='w-8 h-8'
+              />
+            </label>
+
+            <label className='block text-sm font-medium'>
+              textcolor
+              <input
+                type='color'
+                value={textProps.fill}
+                onChange={(e) => updateTextProperties({ fill: e.target.value })}
+                className='w-8 h-8'
+              />
+            </label>
+
+            <label className='block text-sm font-medium'>
+              stroke
+              <input
+                type='color'
+                value={textProps.fill}
+                onChange={(e) => updateTextProperties({ fill: e.target.value })}
+                className='w-8 h-8'
+              />
+            </label>
+          </PopoverContent>
+        </Popover>
+
+        {/* Text Alignment - Updated to Popover */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              className={`px-2 py-1 rounded ${
+                ['left', 'center', 'right'].includes(textProps.textAlign)
+                  ? 'bg-gray-200'
+                  : 'hover:bg-gray-100'
+              }`}
+            >
+              alignment
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className='w-auto p-1'>
+            <div className='flex flex-col gap-1'>
               <button
                 onClick={() => updateTextProperties({ textAlign: 'left' })}
-                className={`px-2 py-1 rounded ${textProps.textAlign === 'left' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                className={`px-2 py-1 rounded ${
+                  textProps.textAlign === 'left'
+                    ? 'bg-gray-200'
+                    : 'hover:bg-gray-100'
+                }`}
               >
-                ←
+                ← Left
               </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Left align</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
               <button
                 onClick={() => updateTextProperties({ textAlign: 'center' })}
-                className={`px-2 py-1 rounded ${textProps.textAlign === 'center' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                className={`px-2 py-1 rounded ${
+                  textProps.textAlign === 'center'
+                    ? 'bg-gray-200'
+                    : 'hover:bg-gray-100'
+                }`}
               >
-                ↔
+                ↔ Center
               </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Center align</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
               <button
                 onClick={() => updateTextProperties({ textAlign: 'right' })}
-                className={`px-2 py-1 rounded ${textProps.textAlign === 'right' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                className={`px-2 py-1 rounded ${
+                  textProps.textAlign === 'right'
+                    ? 'bg-gray-200'
+                    : 'hover:bg-gray-100'
+                }`}
               >
-                →
+                → Right
               </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Right align</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+            </div>
+          </PopoverContent>
+        </Popover>
 
         {/* Spacing Controls */}
         <div className='flex gap-2'>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <input
-                type='range'
-                value={textProps.charSpacing}
-                onChange={(e) =>
-                  updateTextProperties({
-                    charSpacing: parseFloat(e.target.value),
-                  })
-                }
-                className='w-16 border rounded px-2 py-1'
-                min='-200'
-                max='400'
-                step='1'
-                defaultValue='0'
-              />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Letter spacing</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <input
-                type='range'
-                value={textProps.lineHeight}
-                onChange={(e) =>
-                  updateTextProperties({
-                    lineHeight: parseFloat(e.target.value),
-                  })
-                }
-                className='w-16 border rounded px-2 py-1'
-                min='0.5'
-                max='2.5'
-                step='0.01'
-                defaultValue='1.05'
-              />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Line spacing</p>
-            </TooltipContent>
-          </Tooltip>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className='px-2 py-1 rounded hover:bg-gray-100'>
+                spacing
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className='w-64 p-4'>
+              <div className='space-y-4'>
+                <label className='block text-sm font-medium'>
+                  Letter Spacing
+                  <input
+                    type='range'
+                    value={textProps.charSpacing}
+                    onChange={(e) =>
+                      updateTextProperties({
+                        charSpacing: parseFloat(e.target.value),
+                      })
+                    }
+                    className='w-full mt-2'
+                    min='-200'
+                    max='400'
+                    step='1'
+                  />
+                </label>
+
+                <label className='block text-sm font-medium'>
+                  Line Height
+                  <input
+                    type='range'
+                    value={textProps.lineHeight}
+                    onChange={(e) =>
+                      updateTextProperties({
+                        lineHeight: parseFloat(e.target.value),
+                      })
+                    }
+                    className='w-full mt-2'
+                    min='0.5'
+                    max='2.5'
+                    step='0.1'
+                  />
+                </label>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* Opacity Control */}
-        <div className='flex items-center gap-2'>
-          <span className='text-sm'>Opacity:</span>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <input
-                type='range'
-                min='0'
-                max='1'
-                step='0.1'
-                value={textProps.opacity}
-                onChange={(e) =>
-                  updateTextProperties({ opacity: parseFloat(e.target.value) })
-                }
-                className='w-24'
-              />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Text opacity</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className='px-2 py-1 rounded hover:bg-gray-100'>
+              opacity
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className='w-64 p-4'>
+            <div className='space-y-4'>
+              <label className='block text-sm font-medium'>
+                Opacity
+                <input
+                  type='range'
+                  min='0'
+                  max='1'
+                  step='0.1'
+                  value={textProps.opacity}
+                  onChange={(e) =>
+                    updateTextProperties({
+                      opacity: parseFloat(e.target.value),
+                    })
+                  }
+                  className='w-full mt-2'
+                />
+              </label>
+            </div>
+          </PopoverContent>
+        </Popover>
 
         {/* Reset to Defaults */}
         <Tooltip>
