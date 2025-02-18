@@ -310,36 +310,46 @@ export function TextToolbar({
               <div className='space-y-4'>
                 <label className='block text-sm font-medium'>
                   Letter Spacing
-                  <input
-                    type='range'
-                    value={textProps.charSpacing}
-                    onChange={(e) =>
-                      updateTextProperties({
-                        charSpacing: parseFloat(e.target.value),
-                      })
-                    }
-                    className='w-full mt-2'
-                    min='-200'
-                    max='400'
-                    step='1'
-                  />
+                  <div className='flex items-center gap-2'>
+                    <input
+                      type='range'
+                      value={textProps.charSpacing}
+                      onChange={(e) =>
+                        updateTextProperties({
+                          charSpacing: parseFloat(e.target.value),
+                        })
+                      }
+                      className='flex-1 mt-2'
+                      min='-200'
+                      max='400'
+                      step='1'
+                    />
+                    <div className='w-12 h-8 flex items-center justify-center border rounded'>
+                      {textProps.charSpacing}
+                    </div>
+                  </div>
                 </label>
 
                 <label className='block text-sm font-medium'>
                   Line Height
-                  <input
-                    type='range'
-                    value={textProps.lineHeight}
-                    onChange={(e) =>
-                      updateTextProperties({
-                        lineHeight: parseFloat(e.target.value),
-                      })
-                    }
-                    className='w-full mt-2'
-                    min='0.5'
-                    max='2.5'
-                    step='0.1'
-                  />
+                  <div className='flex items-center gap-2'>
+                    <input
+                      type='range'
+                      value={textProps.lineHeight}
+                      onChange={(e) =>
+                        updateTextProperties({
+                          lineHeight: parseFloat(e.target.value),
+                        })
+                      }
+                      className='flex-1 mt-2'
+                      min='0.5'
+                      max='2.5'
+                      step='0.1'
+                    />
+                    <div className='w-12 h-8 flex items-center justify-center border rounded'>
+                      {textProps.lineHeight}
+                    </div>
+                  </div>
                 </label>
               </div>
             </PopoverContent>
@@ -357,19 +367,24 @@ export function TextToolbar({
             <div className='space-y-4'>
               <label className='block text-sm font-medium'>
                 Opacity
-                <input
-                  type='range'
-                  min='0'
-                  max='1'
-                  step='0.1'
-                  value={textProps.opacity}
-                  onChange={(e) =>
-                    updateTextProperties({
-                      opacity: parseFloat(e.target.value),
-                    })
-                  }
-                  className='w-full mt-2'
-                />
+                <div className='flex items-center gap-2'>
+                  <input
+                    type='range'
+                    min='0'
+                    max='1'
+                    step='0.1'
+                    value={textProps.opacity}
+                    onChange={(e) =>
+                      updateTextProperties({
+                        opacity: parseFloat(e.target.value),
+                      })
+                    }
+                    className='flex-1 mt-2'
+                  />
+                  <div className='w-12 h-8 flex items-center justify-center border rounded'>
+                    {textProps.opacity}
+                  </div>
+                </div>
               </label>
             </div>
           </PopoverContent>
