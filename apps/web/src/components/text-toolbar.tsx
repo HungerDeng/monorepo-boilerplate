@@ -1,7 +1,18 @@
 import { TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
 import { Shadow } from 'fabric';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useState } from 'react';
 import { SketchPicker } from 'react-color';
 
+import { Button } from '~*/components/ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '~*/components/ui/command';
 import {
   Popover,
   PopoverContent,
@@ -114,33 +125,76 @@ const TextColorPicker = ({
   );
 };
 
+const fonts = [
+  {
+    label: 'Open Sans',
+    value: 'Open Sans',
+  },
+  {
+    label: 'Impact',
+    value: 'Impact',
+  },
+  {
+    label: 'Arial',
+    value: 'Arial',
+  },
+  {
+    label: 'Times New Roman',
+    value: 'Times New Roman',
+  },
+  {
+    label: 'Comic Sans MS',
+    value: 'Comic Sans MS',
+  },
+];
+
 export function TextToolbar({
   textProps,
   updateTextProperties,
 }: TextToolbarProps) {
+  const [fontFamilyOpen, setFontFamilyOpen] = useState(false);
+
   return (
     <TooltipProvider>
       <div className='fixed top-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-2 flex items-center gap-2 z-10'>
         {/* Font Family Selector */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <select
-              value={textProps.fontFamily}
-              onChange={(e) =>
-                updateTextProperties({ fontFamily: e.target.value })
-              }
-              className='border rounded px-2 py-1'
+        <Popover open={fontFamilyOpen} onOpenChange={setFontFamilyOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant='outline'
+              role='combobox'
+              aria-expanded={fontFamilyOpen}
+              className='w-[200px] justify-between'
             >
-              <option value='Open Sans'>Open Sans</option>
-              <option value='Impact'>Impact</option>
-              <option value='Arial'>Arial</option>
-              <option value='Times New Roman'>Times New Roman</option>
-            </select>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Change font family</p>
-          </TooltipContent>
-        </Tooltip>
+              {textProps.fontFamily ? textProps.fontFamily : 'Select font...'}
+              <ChevronsUpDown className='opacity-50' />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className='w-auto p-1'>
+            <Command>
+              <CommandInput placeholder='Search font...' />
+              <CommandList>
+                <CommandEmpty>No font found.</CommandEmpty>
+                <CommandGroup>
+                  {fonts.map((font) => (
+                    <CommandItem
+                      key={font.value}
+                      onSelect={() => {
+                        updateTextProperties({ fontFamily: font.value });
+                        setFontFamilyOpen(false);
+                      }}
+                    >
+                      {font.label}
+                      {textProps.fontFamily === font.value && (
+                        <Check className='ml-auto h-4 w-4' aria-hidden='true' />
+                      )}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
 
         {/* Font Size Input */}
         <div className='flex items-center gap-2'>
