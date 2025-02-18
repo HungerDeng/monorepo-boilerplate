@@ -1,6 +1,6 @@
 'use client';
 
-import { Canvas, FabricImage, Textbox } from 'fabric';
+import { Canvas, FabricImage, Shadow, Textbox } from 'fabric';
 import { useEffect, useRef, useState } from 'react';
 
 import { Toaster } from '~*/components/ui/toaster';
@@ -194,6 +194,10 @@ export default function Page(): JSX.Element {
         lineHeight: firstTextbox.get('lineHeight') as number,
         opacity: firstTextbox.get('opacity') as number,
         fontStyle: firstTextbox.get('fontStyle') as string,
+        stroke: firstTextbox.get('stroke') as string,
+        strokeWidth: firstTextbox.get('strokeWidth') as number,
+        shadow: firstTextbox.get('shadow') as Shadow,
+        backgroundColor: firstTextbox.get('backgroundColor') as string,
       });
     }
   };
@@ -270,12 +274,21 @@ export default function Page(): JSX.Element {
     const text = new Textbox('Edit me', {
       left: 100,
       top: 100,
-      fontSize: 48,
-      fill: 'white',
-      stroke: 'black',
-      strokeWidth: 2,
-      fontFamily: 'Impact',
-
+      fontSize: defaultTextProps.fontSize,
+      fill: defaultTextProps.fill,
+      stroke: defaultTextProps.stroke,
+      strokeWidth: defaultTextProps.strokeWidth,
+      shadow: defaultTextProps.shadow,
+      backgroundColor: defaultTextProps.backgroundColor,
+      fontFamily: defaultTextProps.fontFamily,
+      fontWeight: defaultTextProps.fontWeight,
+      fontStyle: defaultTextProps.fontStyle,
+      underline: defaultTextProps.underline,
+      linethrough: defaultTextProps.linethrough,
+      uppercase: defaultTextProps.uppercase,
+      textAlign: defaultTextProps.textAlign,
+      charSpacing: defaultTextProps.charSpacing,
+      lineHeight: defaultTextProps.lineHeight,
       borderScaleFactor: 2, // the bigger number, the thicker border
 
       // Customizing the caret

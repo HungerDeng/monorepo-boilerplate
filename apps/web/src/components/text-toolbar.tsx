@@ -1,4 +1,5 @@
 import { TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
+import { Shadow } from 'fabric';
 import { SketchPicker } from 'react-color';
 
 import {
@@ -17,7 +18,16 @@ import { Tooltip, TooltipContent } from '~*/components/ui/tooltip';
 export const defaultTextProps = {
   fontFamily: 'Impact',
   fontSize: 48,
-  fill: '#ffffff',
+  fill: 'white', // text color
+  stroke: 'black', // outline color
+  strokeWidth: 2, // outline width
+  shadow: new Shadow({
+    color: 'transparent',
+    blur: 0,
+    offsetX: 0,
+    offsetY: 0,
+  }),
+  backgroundColor: 'transparent',
   fontWeight: 'normal', // bold or normal
   fontStyle: 'normal', // italic or normal
   underline: false,
@@ -311,43 +321,37 @@ export function TextToolbar({
               </TabsContent>
 
               <TabsContent value='outline'>
-                <label className='block text-sm font-medium'>
-                  Outline
-                  <input
-                    type='color'
-                    value={textProps.fill}
-                    onChange={(e) =>
-                      updateTextProperties({ fill: e.target.value })
-                    }
-                    className='w-8 h-8'
-                  />
-                </label>
+                <TextColorPicker
+                  textColor={textProps.stroke}
+                  updateTextColorCallback={(color) =>
+                    updateTextProperties({ stroke: color })
+                  }
+                />
               </TabsContent>
+
               <TabsContent value='shadow'>
-                <label className='block text-sm font-medium'>
-                  Shadow
-                  <input
-                    type='color'
-                    value={textProps.fill}
-                    onChange={(e) =>
-                      updateTextProperties({ fill: e.target.value })
-                    }
-                    className='w-8 h-8'
-                  />
-                </label>
+                <TextColorPicker
+                  textColor={textProps.shadow.color}
+                  updateTextColorCallback={(color) =>
+                    updateTextProperties({
+                      shadow: new Shadow({
+                        color,
+                        blur: textProps.shadow.blur,
+                        offsetX: textProps.shadow.offsetX,
+                        offsetY: textProps.shadow.offsetY,
+                      }),
+                    })
+                  }
+                />
               </TabsContent>
+
               <TabsContent value='background'>
-                <label className='block text-sm font-medium'>
-                  Background
-                  <input
-                    type='color'
-                    value={textProps.fill}
-                    onChange={(e) =>
-                      updateTextProperties({ fill: e.target.value })
-                    }
-                    className='w-8 h-8'
-                  />
-                </label>
+                <TextColorPicker
+                  textColor={textProps.backgroundColor}
+                  updateTextColorCallback={(color) =>
+                    updateTextProperties({ backgroundColor: color })
+                  }
+                />
               </TabsContent>
             </Tabs>
           </PopoverContent>
