@@ -1,6 +1,20 @@
 import { TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
 import { Shadow } from 'fabric';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  ArrowUpDown,
+  Bold,
+  Check,
+  ChevronsUpDown,
+  Grid3X3,
+  Italic,
+  Palette,
+  Strikethrough,
+  Trash2,
+  Underline,
+} from 'lucide-react';
 import { useState } from 'react';
 import { SketchPicker } from 'react-color';
 
@@ -158,7 +172,7 @@ export function TextToolbar({
 
   return (
     <TooltipProvider>
-      <div className='fixed top-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-2 flex items-center gap-2 z-10'>
+      <div className='fixed top-4 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg p-2 flex items-center gap-1 z-10'>
         {/* Font Family Selector */}
         <Popover open={fontFamilyOpen} onOpenChange={setFontFamilyOpen}>
           <Tooltip>
@@ -168,7 +182,7 @@ export function TextToolbar({
                   variant='outline'
                   role='combobox'
                   aria-expanded={fontFamilyOpen}
-                  className='w-[200px] justify-between'
+                  className='justify-between truncate w-[100px] pl-1'
                 >
                   {textProps.fontFamily
                     ? textProps.fontFamily
@@ -209,7 +223,7 @@ export function TextToolbar({
         </Popover>
 
         {/* Font Size Input */}
-        <div className='flex items-center gap-2'>
+        <div className='flex items-strech border-input border-[1px] rounded-md'>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
@@ -218,7 +232,7 @@ export function TextToolbar({
                     fontSize: Math.max(1, textProps.fontSize - 2),
                   })
                 }
-                className='px-2 hover:bg-gray-100 rounded'
+                className='px-2 hover:bg-gray-100'
               >
                 -
               </button>
@@ -238,7 +252,7 @@ export function TextToolbar({
                     fontSize: Math.max(1, parseInt(e.target.value) || 1),
                   })
                 }
-                className='w-16 border rounded px-2 py-1'
+                className='w-10 rounded px-2 py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
               />
             </TooltipTrigger>
             <TooltipContent>
@@ -254,7 +268,7 @@ export function TextToolbar({
                     fontSize: textProps.fontSize + 2,
                   })
                 }
-                className='px-2 hover:bg-gray-100 rounded'
+                className='px-2 hover:bg-gray-100'
               >
                 +
               </button>
@@ -277,7 +291,7 @@ export function TextToolbar({
               }
               className={`px-2 py-1 rounded ${textProps.fontWeight === 'bold' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
             >
-              B
+              <Bold className='w-5 h-5' />
             </button>
           </TooltipTrigger>
           <TooltipContent>
@@ -297,7 +311,7 @@ export function TextToolbar({
               }
               className={`px-2 py-1 rounded ${textProps.fontStyle === 'italic' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
             >
-              I
+              <Italic className='w-5 h-5' />
             </button>
           </TooltipTrigger>
           <TooltipContent>
@@ -316,7 +330,7 @@ export function TextToolbar({
               }
               className={`px-2 py-1 rounded ${textProps.underline ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
             >
-              U
+              <Underline className='w-5 h-5' />
             </button>
           </TooltipTrigger>
           <TooltipContent>
@@ -335,7 +349,7 @@ export function TextToolbar({
               }
               className={`px-2 py-1 rounded ${textProps.linethrough ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
             >
-              S
+              <Strikethrough className='w-5 h-5' />
             </button>
           </TooltipTrigger>
           <TooltipContent>
@@ -354,7 +368,7 @@ export function TextToolbar({
               }
               className={`px-2 py-1 rounded ${textProps.uppercase ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
             >
-              Aa
+              <span className='text-lg'>Aa</span>
             </button>
           </TooltipTrigger>
           <TooltipContent>
@@ -368,7 +382,7 @@ export function TextToolbar({
             <PopoverTrigger asChild>
               <TooltipTrigger asChild>
                 <button className='px-2 py-1 rounded hover:bg-gray-100'>
-                  color
+                  <Palette className='w-5 h-5' />
                 </button>
               </TooltipTrigger>
             </PopoverTrigger>
@@ -517,14 +531,14 @@ export function TextToolbar({
           <Tooltip>
             <PopoverTrigger asChild>
               <TooltipTrigger asChild>
-                <button
-                  className={`px-2 py-1 rounded ${
-                    ['left', 'center', 'right'].includes(textProps.textAlign)
-                      ? 'bg-gray-200'
-                      : 'hover:bg-gray-100'
-                  }`}
-                >
-                  alignment
+                <button className='px-2 py-1 rounded hover:bg-gray-100'>
+                  {textProps.textAlign === 'left' ? (
+                    <AlignLeft className='w-5 h-5' />
+                  ) : textProps.textAlign === 'center' ? (
+                    <AlignCenter className='w-5 h-5' />
+                  ) : (
+                    <AlignRight className='w-5 h-5' />
+                  )}
                 </button>
               </TooltipTrigger>
             </PopoverTrigger>
@@ -575,7 +589,7 @@ export function TextToolbar({
               <PopoverTrigger asChild>
                 <TooltipTrigger asChild>
                   <button className='px-2 py-1 rounded hover:bg-gray-100'>
-                    spacing
+                    <ArrowUpDown className='w-5 h-5' />
                   </button>
                 </TooltipTrigger>
               </PopoverTrigger>
@@ -639,7 +653,7 @@ export function TextToolbar({
             <PopoverTrigger asChild>
               <TooltipTrigger asChild>
                 <button className='px-2 py-1 rounded hover:bg-gray-100'>
-                  opacity
+                  <Grid3X3 className='w-5 h-5' />
                 </button>
               </TooltipTrigger>
             </PopoverTrigger>
@@ -695,7 +709,7 @@ export function TextToolbar({
               onClick={deleteTextCallback}
               className='px-2 py-1 rounded hover:bg-gray-100 text-sm'
             >
-              Delete
+              <Trash2 className='w-5 h-5' />
             </button>
           </TooltipTrigger>
           <TooltipContent>
