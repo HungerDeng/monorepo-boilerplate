@@ -689,7 +689,7 @@ export function TextToolbar({
         </Popover>
 
         {/* Reset to Defaults */}
-        <Tooltip>
+        {/* <Tooltip>
           <TooltipTrigger asChild>
             <button
               onClick={() => updateTextProperties(defaultTextProps)}
@@ -701,7 +701,7 @@ export function TextToolbar({
           <TooltipContent>
             <p>Reset to default settings</p>
           </TooltipContent>
-        </Tooltip>
+        </Tooltip> */}
 
         <Tooltip>
           <TooltipTrigger asChild>
