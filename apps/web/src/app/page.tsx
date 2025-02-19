@@ -311,9 +311,16 @@ export default function Page(): JSX.Element {
 
   const handleAddText = () => {
     if (!fabricCanvas.current) return;
+
+    // Calculate center coordinates of the canvas
+    const centerX = fabricCanvas.current.width / 2;
+    const centerY = fabricCanvas.current.height / 2;
+
     const text = new Textbox('Edit me', {
-      left: 100,
-      top: 100,
+      left: centerX,
+      top: centerY,
+      originX: 'center', // Set origin point to center of the text box
+      originY: 'center', // Set origin point to center of the text box
       fontSize: defaultTextProps.fontSize,
       fill: defaultTextProps.fill,
       stroke: defaultTextProps.stroke,
@@ -484,42 +491,6 @@ export default function Page(): JSX.Element {
 
   return (
     <main className='flex min-h-screen p-8 gap-8'>
-      {/* Text Formatting Toolbar - Only shown when text is selected */}
-      {showTextToolbar && (
-        <TextToolbar
-          textProps={textProps}
-          copyMode={isOtherTextCopyMode}
-          deleteTextCallback={handleDelete}
-          updateTextProperties={updateTextProperties}
-          copyAllTextStyleCallback={(updates, latestCopyMode) => {
-            setIsOtherTextCopyMode(latestCopyMode);
-            setOtherTextCopiedStyle(updates);
-          }}
-        />
-      )}
-
-      {/* Image Formatting Toolbar - Only shown when image is selected */}
-      {showImageToolbar && (
-        <ImageToolbar
-          imageProps={imageProps}
-          deleteImageCallback={handleDelete}
-          updateImageProperties={updateImageProperties}
-        />
-      )}
-
-      {/* Canvas Section */}
-      <div className='flex-1'>
-        {/* 
-        The HTML <canvas> element is the actual rendering surface required by the browser to draw graphics. Fabric.js works as a wrapper/library around this native element - it can't exist without it. In short, canvas element is mendatory for fabricjs to work.
-        */}
-        <Toaster />
-        <canvas
-          id='canvas'
-          ref={canvasRef}
-          className='border border-gray-300'
-        />
-      </div>
-
       {/* Simplified Sidebar Controls */}
       <div className='w-20 space-y-6 p-4 bg-gray-100 rounded-lg'>
         <div className='flex flex-col items-center gap-4'>
@@ -602,6 +573,42 @@ export default function Page(): JSX.Element {
           </div>
         </div>
       </div>
+
+      {/* Text Formatting Toolbar - Only shown when text is selected */}
+      {showTextToolbar && (
+        <TextToolbar
+          textProps={textProps}
+          copyMode={isOtherTextCopyMode}
+          deleteTextCallback={handleDelete}
+          updateTextProperties={updateTextProperties}
+          copyAllTextStyleCallback={(updates, latestCopyMode) => {
+            setIsOtherTextCopyMode(latestCopyMode);
+            setOtherTextCopiedStyle(updates);
+          }}
+        />
+      )}
+
+      {/* Image Formatting Toolbar - Only shown when image is selected */}
+      {showImageToolbar && (
+        <ImageToolbar
+          imageProps={imageProps}
+          deleteImageCallback={handleDelete}
+          updateImageProperties={updateImageProperties}
+        />
+      )}
+
+      {/* Canvas Section */}
+      <div className='flex-1 w-4/5 h-full'>
+        {/* 
+        The HTML <canvas> element is the actual rendering surface required by the browser to draw graphics. Fabric.js works as a wrapper/library around this native element - it can't exist without it. In short, canvas element is mendatory for fabricjs to work.
+        */}
+        <canvas
+          id='canvas'
+          ref={canvasRef}
+          className='border border-gray-300'
+        />
+      </div>
+      <Toaster />
     </main>
   );
 }
