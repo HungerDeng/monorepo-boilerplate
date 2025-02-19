@@ -10,6 +10,7 @@ import {
   ChevronsUpDown,
   Grid3X3,
   Italic,
+  PaintRoller,
   Palette,
   Strikethrough,
   Trash2,
@@ -67,8 +68,13 @@ export const defaultTextProps = {
 
 interface TextToolbarProps {
   textProps: typeof defaultTextProps;
+  copyMode: boolean;
   deleteTextCallback: () => void;
   updateTextProperties: (updates: Record<string, any>) => void;
+  copyAllTextStyleCallback: (
+    updates: typeof defaultTextProps | null,
+    latestCopyMode: boolean,
+  ) => void;
 }
 
 interface TextColorPickerProps {
@@ -165,8 +171,10 @@ const fonts = [
 
 export function TextToolbar({
   textProps,
+  copyMode,
   updateTextProperties,
   deleteTextCallback,
+  copyAllTextStyleCallback,
 }: TextToolbarProps) {
   const [fontFamilyOpen, setFontFamilyOpen] = useState(false);
 
@@ -703,13 +711,36 @@ export function TextToolbar({
           </TooltipContent>
         </Tooltip> */}
 
+        {/* copy style to affect other textbox fast */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                if (copyMode) {
+                  copyAllTextStyleCallback(null, false);
+                } else {
+                  copyAllTextStyleCallback(textProps, true);
+                }
+              }}
+              className={`px-2 py-1 rounded ${
+                copyMode ? 'bg-blue-100 hover:bg-blue-200' : 'hover:bg-gray-100'
+              } text-sm`}
+            >
+              <PaintRoller className='w-5 h-5' />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{copyMode ? 'Click any text to apply style' : 'Copy style'}</p>
+          </TooltipContent>
+        </Tooltip>
+
         <Tooltip>
           <TooltipTrigger asChild>
             <button
               onClick={deleteTextCallback}
               className='px-2 py-1 rounded hover:bg-gray-100 text-sm'
             >
-              <Trash2 className='w-5 h-5' />
+              <Trash2 className='w-5 h-5 text-red-500' />
             </button>
           </TooltipTrigger>
           <TooltipContent>

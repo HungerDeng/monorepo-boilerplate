@@ -25,6 +25,12 @@ export default function Page(): JSX.Element {
   // Change state type to array of arrays
   const [deletedObjects, setDeletedObjects] = useState<any[][]>([]);
 
+  // Add these to the existing state definitions
+  const [otherTextCopiedStyle, setOtherTextCopiedStyle] = useState<
+    typeof defaultTextProps | null
+  >(null);
+  const [isOtherTextCopyMode, setIsOtherTextCopyMode] = useState(false);
+
   // Initialize Fabric.js canvas with selection events
   useEffect(() => {
     if (canvasRef.current === null) return;
@@ -96,6 +102,34 @@ export default function Page(): JSX.Element {
     };
   }, [deletedObjects]);
 
+  // Add this effect hook for handling style application
+  useEffect(() => {
+    if (!fabricCanvas.current || !isOtherTextCopyMode) return;
+
+    const handleObjectClick = (e: any) => {
+      if (
+        e.target &&
+        FABRIC_TEXT_TYPE_ARRAY.includes(e.target.type) &&
+        isOtherTextCopyMode &&
+        otherTextCopiedStyle
+      ) {
+        // Apply copied style to clicked textbox
+        updateTextProperties(otherTextCopiedStyle);
+        fabricCanvas.current?.requestRenderAll();
+
+        // Clear copy mode after application
+        setIsOtherTextCopyMode(false);
+        setOtherTextCopiedStyle(null);
+      }
+    };
+
+    fabricCanvas.current.on('mouse:down', handleObjectClick);
+
+    return () => {
+      fabricCanvas.current?.off('mouse:down', handleObjectClick);
+    };
+  }, [isOtherTextCopyMode, otherTextCopiedStyle]);
+
   const handleDelete = () => {
     if (!fabricCanvas.current) return;
     const activeObjects = fabricCanvas.current.getActiveObjects();
@@ -141,6 +175,8 @@ export default function Page(): JSX.Element {
       setShowTextToolbar(false);
       setShowImageToolbar(false);
       setTextProps(defaultTextProps);
+      setOtherTextCopiedStyle(null);
+      setIsOtherTextCopyMode(false);
       return;
     }
 
@@ -452,8 +488,13 @@ export default function Page(): JSX.Element {
       {showTextToolbar && (
         <TextToolbar
           textProps={textProps}
+          copyMode={isOtherTextCopyMode}
           deleteTextCallback={handleDelete}
           updateTextProperties={updateTextProperties}
+          copyAllTextStyleCallback={(updates, latestCopyMode) => {
+            setIsOtherTextCopyMode(latestCopyMode);
+            setOtherTextCopiedStyle(updates);
+          }}
         />
       )}
 
