@@ -379,12 +379,20 @@ export default function Page(): JSX.Element {
     fabricCanvas.current?.renderAll();
   };
 
+  // TODO: the code below just works during development, need to delete it before deployment.
+  useEffect(() => {
+    handleSelectTemplate();
+  }, []);
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !fabricCanvas.current) return;
 
+    console.log('file', file);
+
     const reader = new FileReader();
     reader.onload = async (event) => {
+      console.log('fileUrl', event.target?.result as string);
       const img = await FabricImage.fromURL(
         event.target?.result as string,
         {},
@@ -499,10 +507,65 @@ export default function Page(): JSX.Element {
   };
 
   const handleSelectTemplate = () => {
-    toast({
-      title: 'Template',
-      description: 'Select a meme template',
-    });
+    const settingPlaceholder = {
+      width: 768,
+      height: 768,
+      textBoxes: [
+        {
+          height: 107.36326530612244,
+          width: 373.0285714285714,
+          left: 7.836734693877551,
+          top: 275.8530612244898,
+          rotation: 0,
+        },
+        {
+          height: 104.22857142857143,
+          width: 376.1632653061224,
+          left: 385.5673469387755,
+          top: 278.2040816326531,
+          rotation: 0,
+        },
+        {
+          height: 107.36326530612244,
+          width: 385.5673469387755,
+          left: 382.43265306122447,
+          top: 660.6367346938775,
+          rotation: 0,
+        },
+      ],
+    };
+
+    // Replace placeholder file creation with actual image loading
+    fetch('/Anakin-Padme-4-Panel-meme-5c7lwq.jpg')
+      .then((res) => res.blob())
+      .then(async (blob) => {
+        const img = await FabricImage.fromURL(
+          URL.createObjectURL(blob),
+          {},
+          {
+            selectable: false,
+          },
+        );
+        function getScaleRatio() {
+          // Add dynamic scaling based on image dimensions
+          const maxWidth = window.innerWidth * 0.9;
+          const maxHeight = window.innerHeight * 0.9;
+          // Calculate scaling ratio while preserving aspect ratio
+          const scale = Math.min(
+            maxWidth / settingPlaceholder.width,
+            maxHeight / settingPlaceholder.height,
+          );
+          return scale;
+        }
+        const scale = getScaleRatio();
+        fabricCanvas.current!.setDimensions({
+          width: settingPlaceholder.width * scale,
+          height: settingPlaceholder.height * scale,
+        });
+        img.scale(scale);
+        fabricCanvas.current!.add(img);
+        fabricCanvas.current!.renderAll();
+      });
   };
 
   const handleAddTextOutside = () => {
