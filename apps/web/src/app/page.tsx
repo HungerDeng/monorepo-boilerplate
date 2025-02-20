@@ -1,7 +1,17 @@
 'use client';
 
 import { Canvas, FabricImage, Shadow, Textbox } from 'fabric';
+import {
+  Brush,
+  CloudUpload,
+  Download,
+  LayoutPanelLeft,
+  Type,
+  UnfoldVertical,
+  User,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { SidebarButton } from 'src/components/sidebar-button';
 
 import { Toaster } from '~*/components/ui/toaster';
 import { useToast } from '~*/hooks/use-toast';
@@ -309,7 +319,7 @@ export default function Page(): JSX.Element {
     fabricCanvas.current.renderAll();
   };
 
-  const handleAddText = () => {
+  const handleAddTextInside = () => {
     if (!fabricCanvas.current) return;
 
     // Calculate center coordinates of the canvas
@@ -489,88 +499,88 @@ export default function Page(): JSX.Element {
     fabricCanvas.current.requestRenderAll();
   };
 
+  const handleSelectTemplate = () => {
+    toast({
+      title: 'Template',
+      description: 'Select a meme template',
+    });
+  };
+
+  const handleAddTextOutside = () => {
+    toast({
+      title: 'Text outside',
+      description: 'Add text outside',
+    });
+  };
+
+  const handleDraw = () => {
+    toast({
+      title: 'Draw',
+      description: 'Draw',
+    });
+  };
+
+  const handleMyAccount = () => {
+    toast({
+      title: 'My account',
+      description: 'My account',
+    });
+  };
   return (
-    <main className='flex min-h-screen p-8 gap-8'>
+    <main className='flex min-h-screen gap-4'>
       {/* Simplified Sidebar Controls */}
       <div className='w-20 space-y-6 p-4 bg-gray-100 rounded-lg'>
         <div className='flex flex-col items-center gap-4'>
-          <div className='flex flex-col items-center'>
-            <label className='cursor-pointer'>
+          {/* select meme template */}
+          <SidebarButton
+            icon={<LayoutPanelLeft />}
+            onClick={handleSelectTemplate}
+            text='Template'
+          />
+
+          {/* add Text inside*/}
+          <SidebarButton
+            icon={<Type />}
+            onClick={handleAddTextInside}
+            text='Inside'
+          />
+
+          {/* add text outside */}
+          <SidebarButton
+            icon={<UnfoldVertical />}
+            onClick={handleAddTextOutside}
+            text='Outside'
+          />
+
+          {/* draw */}
+          <SidebarButton icon={<Brush />} onClick={handleDraw} text='Draw' />
+
+          {/* Upload Image */}
+          <div className='flex flex-col items-center gap-1 cursor-pointer'>
+            <label className='w-fit h-fit p-2 border border-input bg-white rounded-xl'>
               <input
                 type='file'
                 accept='image/*'
                 onChange={handleImageUpload}
                 className='hidden'
               />
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                className='w-8 h-8'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-              >
-                <path d='M7 16a4 4 0 0 1-4-4 4 4 0 0 1 4-4h.5a5.5 5.5 0 0 1 11 0H19a4 4 0 0 1 4 4 4 4 0 0 1-4 4H7z' />
-                <path d='M12 12v6' />
-                <path d='M9 15l3-3 3 3' />
-              </svg>
+              <CloudUpload className='size-6' />
             </label>
-            <span className='text-xs mt-1'>Upload</span>
+            <span className='text-sm mt-1'>Upload</span>
           </div>
 
-          <div className='flex flex-col items-center'>
-            <button onClick={handleAddText}>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                className='w-8 h-8'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-              >
-                <path d='M17 10H3' />
-                <path d='M21 6H3' />
-                <path d='M21 14H3' />
-                <path d='M17 18H3' />
-              </svg>
-            </button>
-            <span className='text-xs mt-1'>Text</span>
-          </div>
+          <SidebarButton
+            icon={<Download />}
+            onClick={handleExport}
+            text='Download'
+          />
 
-          <div className='flex flex-col items-center'>
-            <button onClick={handleAddText}>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                className='w-8 h-8'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-              >
-                <path d='M12 20h9' />
-                <path d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z' />
-              </svg>
-            </button>
-            <span className='text-xs mt-1'>Draw</span>
-          </div>
-
-          <div className='flex flex-col items-center'>
-            <button onClick={handleExport}>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                className='w-8 h-8'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                strokeWidth='2'
-              >
-                <path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' />
-                <polyline points='7 10 12 15 17 10' />
-                <line x1='12' y1='15' x2='12' y2='3' />
-              </svg>
-            </button>
-            <span className='text-xs mt-1'>Export</span>
-          </div>
+          {/* my account*/}
+          <SidebarButton
+            icon={<User />}
+            onClick={handleMyAccount}
+            text='Account'
+          />
         </div>
       </div>
 
