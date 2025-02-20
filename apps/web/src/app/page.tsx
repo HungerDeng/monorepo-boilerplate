@@ -389,24 +389,8 @@ export default function Page(): JSX.Element {
         event.target?.result as string,
         {},
         {
-          scaleToWidth: fabricCanvas.current!.width * 0.8,
-          left: fabricCanvas.current!.width / 2,
-          top: fabricCanvas.current!.height / 2,
-          originX: 'center',
-          originY: 'center',
-          borderScaleFactor: 2, // the bigger number, the thicker border
+          selectable: false,
         },
-        // TODO: adjust image size to fit canvas
-        // (img: any) => {
-        //   // Scale image to fit canvas if needed
-        //   img.scaleToWidth(fabricCanvas.current!.width * 0.8);
-        //   img.set({
-        //     left: fabricCanvas.current!.width / 2,
-        //     top: fabricCanvas.current!.height / 2,
-        //     originX: 'center',
-        //     originY: 'center',
-        //   });
-        // },
       );
       // reference: https://github.com/fabricjs/fabric.js/discussions/7797#discussioncomment-2958064
       // UX effect: when hovering over the image, its border becomes visible even if it is not selected.
@@ -428,6 +412,21 @@ export default function Page(): JSX.Element {
           img.canvas?.contextTop as CanvasRenderingContext2D,
         );
       });
+
+      function getScaleRatio(img: FabricImage) {
+        // Add dynamic scaling based on image dimensions
+        const maxWidth = window.innerWidth * 0.9;
+        const maxHeight = window.innerHeight * 0.9;
+        // Calculate scaling ratio while preserving aspect ratio
+        const scale = Math.min(maxWidth / img.width!, maxHeight / img.height!);
+        return scale;
+      }
+      const scale = getScaleRatio(img);
+      fabricCanvas.current!.setDimensions({
+        width: img.width! * scale,
+        height: img.height! * scale,
+      });
+      img.scale(scale);
       fabricCanvas.current!.add(img);
       fabricCanvas.current!.renderAll();
     };
@@ -608,7 +607,7 @@ export default function Page(): JSX.Element {
       )}
 
       {/* Canvas Section */}
-      <div className='flex-1 w-4/5 h-full'>
+      <div className='mt-8 w-fit h-fit'>
         {/* 
         The HTML <canvas> element is the actual rendering surface required by the browser to draw graphics. Fabric.js works as a wrapper/library around this native element - it can't exist without it. In short, canvas element is mendatory for fabricjs to work.
         */}
