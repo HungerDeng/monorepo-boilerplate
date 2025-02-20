@@ -508,35 +508,35 @@ export default function Page(): JSX.Element {
 
   const handleSelectTemplate = () => {
     const settingPlaceholder = {
-      width: 768,
-      height: 768,
+      width: 600,
+      height: 908,
       textBoxes: [
         {
-          height: 107.36326530612244,
-          width: 373.0285714285714,
-          left: 7.836734693877551,
-          top: 275.8530612244898,
-          rotation: 0,
+          height: 90.61224489795919,
+          width: 187.3469387755102,
+          left: 55.10204081632653,
+          top: 84.48979591836735,
+          rotation: 349,
         },
         {
-          height: 104.22857142857143,
-          width: 376.1632653061224,
-          left: 385.5673469387755,
-          top: 278.2040816326531,
-          rotation: 0,
+          height: 80.81632653061224,
+          width: 143.26530612244898,
+          left: 273.0612244897959,
+          top: 55.10204081632653,
+          rotation: 352,
         },
         {
-          height: 107.36326530612244,
-          width: 385.5673469387755,
-          left: 382.43265306122447,
-          top: 660.6367346938775,
+          height: 121.6938775510204,
+          width: 559.5918367346939,
+          left: 19.591836734693878,
+          top: 753.1530612244899,
           rotation: 0,
         },
       ],
     };
 
     // Replace placeholder file creation with actual image loading
-    fetch('/Anakin-Padme-4-Panel-meme-5c7lwq.jpg')
+    fetch('/Two-Buttons-meme-1g8my4.jpg')
       .then((res) => res.blob())
       .then(async (blob) => {
         const img = await FabricImage.fromURL(
@@ -564,6 +564,41 @@ export default function Page(): JSX.Element {
         });
         img.scale(scale);
         fabricCanvas.current!.add(img);
+
+        // Add text boxes with scaled positions
+        settingPlaceholder.textBoxes.forEach((textBox) => {
+          const text = new Textbox('Edit me', {
+            left: img.left! + textBox.left * scale, // Reference image's left position
+            top: img.top! + (textBox.top + textBox.height / 2) * scale, // Reference image's top position, and add half height to center the textbox.
+            width: textBox.width * scale,
+            height: textBox.height * scale,
+            originX: 'left',
+            originY: 'center',
+            angle: textBox.rotation, // rotation center is controlled by the originX and originY properties. After comparing the different originX-originY pairs, I found what pair produces the best UX appearance after rotation is originX: 'left', originY: 'center'.
+            shadow: defaultTextProps.shadow,
+            fontSize: 30, // Dynamic font calculation
+            fill: 'black',
+            fontFamily: defaultTextProps.fontFamily,
+          });
+
+          // Add hover effects like other objects
+          text.on('mouseover', () => {
+            text._renderControls(
+              text.canvas?.contextTop as CanvasRenderingContext2D,
+              {
+                hasControls: false,
+              },
+            );
+          });
+          text.on('mouseout', () =>
+            text.canvas?.clearContext(text.canvas.contextTop),
+          );
+          text.on('mousedown', () =>
+            text.canvas?.clearContext(text.canvas.contextTop),
+          );
+
+          fabricCanvas.current!.add(text);
+        });
         fabricCanvas.current!.renderAll();
       });
   };
