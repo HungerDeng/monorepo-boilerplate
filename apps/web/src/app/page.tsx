@@ -1,6 +1,13 @@
 'use client';
 
-import { Canvas, FabricImage, Shadow, Textbox } from 'fabric';
+import {
+  Canvas,
+  FabricImage,
+  Shadow,
+  Textbox,
+  TOriginX,
+  TOriginY,
+} from 'fabric';
 import {
   Brush,
   CloudUpload,
@@ -567,14 +574,25 @@ export default function Page(): JSX.Element {
 
         // Add text boxes with scaled positions
         settingPlaceholder.textBoxes.forEach((textBox) => {
+          let left = img.left! + textBox.left * scale; // Reference image's left position
+          let top = img.top! + textBox.top * scale; // Reference image's top position
+          let originX = 'left';
+          let originY = 'top';
+          if (textBox.rotation !== 0) {
+            left = img.left! + textBox.left * scale;
+            top = img.top! + (textBox.top + textBox.height / 2) * scale; //add half height to center the textbox.
+            // rotation center is controlled by the originX and originY properties. When the textbox needs to be rotated, different originX-originY pairs produce different UX appearance. After comparing the different pairs, I found what pair produces the best one is originX: 'left', originY: 'center'.
+            originX = 'left';
+            originY = 'center';
+          }
           const text = new Textbox('Edit me', {
-            left: img.left! + textBox.left * scale, // Reference image's left position
-            top: img.top! + (textBox.top + textBox.height / 2) * scale, // Reference image's top position, and add half height to center the textbox.
+            left: left,
+            top: top,
             width: textBox.width * scale,
             height: textBox.height * scale,
-            originX: 'left',
-            originY: 'center',
-            angle: textBox.rotation, // rotation center is controlled by the originX and originY properties. After comparing the different originX-originY pairs, I found what pair produces the best UX appearance after rotation is originX: 'left', originY: 'center'.
+            originX: originX as TOriginX,
+            originY: originY as TOriginY,
+            angle: textBox.rotation,
             shadow: defaultTextProps.shadow,
             fontSize: 30, // Dynamic font calculation
             fill: 'black',
