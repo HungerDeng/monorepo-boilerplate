@@ -43,7 +43,7 @@ import {
 import { Tooltip, TooltipContent } from '~*/components/ui/tooltip';
 
 export const defaultTextProps = {
-  fontFamily: 'Impact',
+  fontFamily: 'Impact', //TODO: Impact font doesn't work well in fabricjs when the text includes other characters other than English, like Chinese, Japanese, etc. Need to fix this issue in the future, now it isn't a high priority. Maybe we can observe the content of the text, applying other fonts that support Asian characters automatically when the case occurs, just like the solution of iloveimg. It changes the font to Arial when the case occurs.
   fontSize: 48,
   fill: 'white', // text color
   stroke: 'black', // outline color
