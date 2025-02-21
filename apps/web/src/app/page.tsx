@@ -483,7 +483,9 @@ export default function Page(): JSX.Element {
     if (!fabricCanvas.current) return;
     const link = document.createElement('a');
     link.download = 'meme.png';
-    link.href = fabricCanvas.current.toDataURL();
+    link.href = fabricCanvas.current.toDataURL({
+      multiplier: 2,
+    });
     link.click();
   };
 
