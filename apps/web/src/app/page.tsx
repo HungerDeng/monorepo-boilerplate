@@ -861,6 +861,7 @@ export default function Page(): JSX.Element {
         {/* 
         The HTML <canvas> element is the actual rendering surface required by the browser to draw graphics. Fabric.js works as a wrapper/library around this native element - it can't exist without it. In short, canvas element is mendatory for fabricjs to work.
         */}
+        {/* TODO(today): fix the positions of sidebars and panels for preventing them scrolling down with canvas's scroll event */}
         <canvas
           id='canvas'
           ref={canvasRef}
