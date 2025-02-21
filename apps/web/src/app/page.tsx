@@ -53,12 +53,10 @@ export default function Page(): JSX.Element {
 
   // Add new state variables
   const [showTextOutsideConfig, setShowTextOutsideConfig] = useState(false);
-  const [spacingType, setSpacingType] = useState<
-    'none' | 'top' | 'bottom' | 'both'
-  >('none');
+  const [topSpacingHeight, setTopSpacingHeight] = useState(0);
+  const [bottomSpacingHeight, setBottomSpacingHeight] = useState(0);
   const topSpacingRect = useRef<Rect | null>(null);
   const bottomSpacingRect = useRef<Rect | null>(null);
-  const [spacingHeight, setSpacingHeight] = useState(50); // Default 50px
 
   // Initialize Fabric.js canvas with selection events
   useEffect(() => {
@@ -662,74 +660,56 @@ export default function Page(): JSX.Element {
     setShowTextOutsideConfig(true);
   };
 
-  const resetSpacingRect = (rect: Rect) => {
-    rect.set({
+  const handleTopSpacingChange = (height: number) => {
+    if (!fabricCanvas.current || !topSpacingRect.current) return;
+
+    // calculate the difference in height between the new height and the old height
+    const diffHeight = height - topSpacingHeight;
+
+    fabricCanvas.current.setDimensions({
+      width: memeTemplateWidth,
+      height: memeTemplateHeight + height + bottomSpacingHeight,
+    });
+
+    // Move all existing objects except the top spacing rect
+    fabricCanvas.current.forEachObject((obj) => {
+      if (obj !== topSpacingRect.current) {
+        obj.set('top', obj.top + diffHeight);
+        // if we don't call setCoords as below, it just updates the object's visual position, and its interactive areas/positions/coordinates still remain unchanged.
+        obj.setCoords();
+      }
+    });
+
+    topSpacingRect.current.set({
       left: 0,
       top: 0,
-      width: 0,
-      height: 0,
-      fill: 'transparent',
-      selectable: false,
-      hasControls: false,
+      width: memeTemplateWidth,
+      height: height,
+      fill: 'gray',
     });
+
+    setTopSpacingHeight(height);
+    fabricCanvas.current.renderAll();
   };
 
-  // Add new function to handle spacing changes
-  const handleSpacingChange = (
-    type: 'none' | 'top' | 'bottom' | 'both',
-    height: number,
-  ) => {
-    if (
-      !fabricCanvas.current ||
-      !topSpacingRect.current ||
-      !bottomSpacingRect.current
-    ) {
-      return;
-    }
+  const handleBottomSpacingChange = (height: number) => {
+    if (!fabricCanvas.current || !bottomSpacingRect.current) return;
 
-    if (type === 'none') {
-      resetSpacingRect(topSpacingRect.current);
-      resetSpacingRect(bottomSpacingRect.current);
-    } else if (type === 'top') {
-      resetSpacingRect(bottomSpacingRect.current);
-      // update canvas height
-      fabricCanvas.current.setDimensions({
-        width: memeTemplateWidth,
-        height: memeTemplateHeight + height,
-      });
-      // Move all existing objects except the top spacing rect
-      const diffHeight = height - topSpacingRect.current.height;
-      fabricCanvas.current!.forEachObject((obj) => {
-        if (obj !== topSpacingRect.current) {
-          obj.set('top', obj.top + diffHeight);
-          // if we don't call setCoords as below, it just updates the object's visual position, and its interactive areas/positions/coordinates still remain unchanged.
-          obj.setCoords();
-        }
-      });
-      // update top spacing rect's height
-      topSpacingRect.current.set({
-        left: 0,
-        top: 0,
-        width: memeTemplateWidth,
-        height: height,
-        fill: 'red',
-      });
+    fabricCanvas.current.setDimensions({
+      width: memeTemplateWidth,
+      height: memeTemplateHeight + topSpacingHeight + height,
+    });
 
-      // Re-render canvas
-      fabricCanvas.current!.renderAll();
-      setSpacingType(type);
-      setSpacingHeight(height);
-    } else if (type === 'bottom') {
-      resetSpacingRect(topSpacingRect.current);
-      bottomSpacingRect.current.set({
-        height: height,
-        fill: 'red',
-      });
-      // TODO:
-    } else if (type === 'both') {
-      // configure both spacing rects
-      // TODO:
-    }
+    bottomSpacingRect.current.set({
+      left: 0,
+      top: memeTemplateHeight + topSpacingHeight,
+      width: memeTemplateWidth,
+      height: height,
+      fill: 'gray',
+    });
+
+    setBottomSpacingHeight(height);
+    fabricCanvas.current.renderAll();
   };
 
   const handleDraw = () => {
@@ -831,46 +811,40 @@ export default function Page(): JSX.Element {
         <div className='w-64 bg-white p-4 border border-gray-200 rounded-lg'>
           <h3 className='text-lg font-semibold mb-4'>Text Outside Settings</h3>
 
-          {/* Spacing Type Selection */}
+          {/* Top Spacing Slider */}
           <div className='mb-4'>
             <label className='block text-sm font-medium mb-2'>
-              Spacing Position
+              Top Spacing: {topSpacingHeight}px
             </label>
-            <select
-              className='w-full p-2 border rounded'
-              value={spacingType}
-              onChange={(e) =>
-                handleSpacingChange(e.target.value as any, spacingHeight)
-              }
-            >
-              <option value='none'>No spacing</option>
-              <option value='top'>Top</option>
-              <option value='bottom'>Bottom</option>
-              <option value='both'>Top & Bottom</option>
-            </select>
+            <input
+              type='range'
+              min='0'
+              max='400'
+              step='20'
+              value={topSpacingHeight}
+              onChange={(e) => handleTopSpacingChange(parseInt(e.target.value))}
+              className='w-full'
+            />
           </div>
 
-          {/* Height Slider */}
-          {spacingType !== 'none' && (
-            <div className='mb-4'>
-              <label className='block text-sm font-medium mb-2'>
-                Spacing Height: {spacingHeight}px
-              </label>
-              <input
-                type='range'
-                min='0'
-                max='400'
-                step='20'
-                value={spacingHeight}
-                onChange={(e) =>
-                  handleSpacingChange(spacingType, parseInt(e.target.value))
-                }
-                className='w-full'
-              />
-            </div>
-          )}
+          {/* Bottom Spacing Slider */}
+          <div className='mb-4'>
+            <label className='block text-sm font-medium mb-2'>
+              Bottom Spacing: {bottomSpacingHeight}px
+            </label>
+            <input
+              type='range'
+              min='0'
+              max='400'
+              step='20'
+              value={bottomSpacingHeight}
+              onChange={(e) =>
+                handleBottomSpacingChange(parseInt(e.target.value))
+              }
+              className='w-full'
+            />
+          </div>
 
-          {/* Close Button */}
           <button
             onClick={() => setShowTextOutsideConfig(false)}
             className='w-full mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300'
@@ -882,7 +856,7 @@ export default function Page(): JSX.Element {
 
       {/* Canvas Section */}
       <div
-        className={`mt-8 w-fit h-fit ${showTextOutsideConfig ? 'ml-4' : ''}`}
+        className={`my-8 w-fit h-fit ${showTextOutsideConfig ? 'ml-4' : ''}`}
       >
         {/* 
         The HTML <canvas> element is the actual rendering surface required by the browser to draw graphics. Fabric.js works as a wrapper/library around this native element - it can't exist without it. In short, canvas element is mendatory for fabricjs to work.
