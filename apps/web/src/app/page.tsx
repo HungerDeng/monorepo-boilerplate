@@ -728,7 +728,10 @@ export default function Page(): JSX.Element {
   return (
     <main className='flex min-h-screen gap-4'>
       {/* Simplified Sidebar Controls */}
-      <div className='w-20 space-y-6 p-4 bg-gray-100 rounded-lg'>
+      <div
+        id='sidebar-container'
+        className='w-20 space-y-6 p-4 bg-gray-100 rounded-lg'
+      >
         <div className='flex flex-col items-center gap-4'>
           {/* select meme template */}
           <SidebarButton
@@ -783,91 +786,100 @@ export default function Page(): JSX.Element {
         </div>
       </div>
 
-      {/* Text Formatting Toolbar - Only shown when text is selected */}
-      {showTextToolbar && (
-        <TextToolbar
-          textProps={textProps}
-          copyMode={isOtherTextCopyMode}
-          deleteTextCallback={handleDelete}
-          updateTextProperties={updateTextProperties}
-          copyAllTextStyleCallback={(updates, latestCopyMode) => {
-            setIsOtherTextCopyMode(latestCopyMode);
-            setOtherTextCopiedStyle(updates);
-          }}
-        />
-      )}
+      <div id='panel-container'>
+        {/* Text Outside Configuration Panel */}
+        {showTextOutsideConfig && (
+          <div className='w-64 bg-white p-4 border border-gray-200 rounded-lg'>
+            <h3 className='text-lg font-semibold mb-4'>
+              Text Outside Settings
+            </h3>
 
-      {/* Image Formatting Toolbar - Only shown when image is selected */}
-      {showImageToolbar && (
-        <ImageToolbar
-          imageProps={imageProps}
-          deleteImageCallback={handleDelete}
-          updateImageProperties={updateImageProperties}
-        />
-      )}
+            {/* Top Spacing Slider */}
+            <div className='mb-4'>
+              <label className='block text-sm font-medium mb-2'>
+                Top Spacing: {topSpacingHeight}px
+              </label>
+              <input
+                type='range'
+                min='0'
+                max='400'
+                step='20'
+                value={topSpacingHeight}
+                onChange={(e) =>
+                  handleTopSpacingChange(parseInt(e.target.value))
+                }
+                className='w-full'
+              />
+            </div>
 
-      {/* Text Outside Configuration Panel */}
-      {showTextOutsideConfig && (
-        <div className='w-64 bg-white p-4 border border-gray-200 rounded-lg'>
-          <h3 className='text-lg font-semibold mb-4'>Text Outside Settings</h3>
+            {/* Bottom Spacing Slider */}
+            <div className='mb-4'>
+              <label className='block text-sm font-medium mb-2'>
+                Bottom Spacing: {bottomSpacingHeight}px
+              </label>
+              <input
+                type='range'
+                min='0'
+                max='400'
+                step='20'
+                value={bottomSpacingHeight}
+                onChange={(e) =>
+                  handleBottomSpacingChange(parseInt(e.target.value))
+                }
+                className='w-full'
+              />
+            </div>
 
-          {/* Top Spacing Slider */}
-          <div className='mb-4'>
-            <label className='block text-sm font-medium mb-2'>
-              Top Spacing: {topSpacingHeight}px
-            </label>
-            <input
-              type='range'
-              min='0'
-              max='400'
-              step='20'
-              value={topSpacingHeight}
-              onChange={(e) => handleTopSpacingChange(parseInt(e.target.value))}
-              className='w-full'
-            />
+            <button
+              onClick={() => setShowTextOutsideConfig(false)}
+              className='w-full mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300'
+            >
+              Close
+            </button>
           </div>
+        )}
+      </div>
 
-          {/* Bottom Spacing Slider */}
-          <div className='mb-4'>
-            <label className='block text-sm font-medium mb-2'>
-              Bottom Spacing: {bottomSpacingHeight}px
-            </label>
-            <input
-              type='range'
-              min='0'
-              max='400'
-              step='20'
-              value={bottomSpacingHeight}
-              onChange={(e) =>
-                handleBottomSpacingChange(parseInt(e.target.value))
-              }
-              className='w-full'
+      <div id='workspace-container' className='flex flex-col'>
+        <div id='text-toolbar-container'>
+          {/* Text Formatting Toolbar - Only shown when text is selected */}
+          {showTextToolbar && (
+            <TextToolbar
+              textProps={textProps}
+              copyMode={isOtherTextCopyMode}
+              deleteTextCallback={handleDelete}
+              updateTextProperties={updateTextProperties}
+              copyAllTextStyleCallback={(updates, latestCopyMode) => {
+                setIsOtherTextCopyMode(latestCopyMode);
+                setOtherTextCopiedStyle(updates);
+              }}
             />
-          </div>
+          )}
 
-          <button
-            onClick={() => setShowTextOutsideConfig(false)}
-            className='w-full mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300'
-          >
-            Close
-          </button>
+          {/* Image Formatting Toolbar - Only shown when image is selected */}
+          {showImageToolbar && (
+            <ImageToolbar
+              imageProps={imageProps}
+              deleteImageCallback={handleDelete}
+              updateImageProperties={updateImageProperties}
+            />
+          )}
         </div>
-      )}
 
-      {/* Canvas Section */}
-      <div
-        className={`my-8 w-fit h-fit ${showTextOutsideConfig ? 'ml-4' : ''}`}
-      >
-        {/* 
+        <div
+          id='canvas-container'
+          className={`my-8 w-fit h-fit ${showTextOutsideConfig ? 'ml-4' : ''}`}
+        >
+          {/* 
         The HTML <canvas> element is the actual rendering surface required by the browser to draw graphics. Fabric.js works as a wrapper/library around this native element - it can't exist without it. In short, canvas element is mendatory for fabricjs to work.
         */}
-        {/* TODO(today): fix the positions of sidebars and panels for preventing them scrolling down with canvas's scroll event */}
-        <canvas
-          id='canvas'
-          ref={canvasRef}
-          className='border border-gray-300'
-        />
-        {/* TODO(today): support adding space above and below the image */}
+          {/* TODO(today): fix the positions of sidebars and panels for preventing them scrolling down with canvas's scroll event */}
+          <canvas
+            id='canvas'
+            ref={canvasRef}
+            className='border border-gray-300'
+          />
+        </div>
       </div>
       <Toaster />
     </main>
