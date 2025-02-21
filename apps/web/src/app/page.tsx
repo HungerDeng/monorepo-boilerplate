@@ -561,6 +561,7 @@ export default function Page(): JSX.Element {
           const scale = Math.min(
             maxWidth / settingPlaceholder.width,
             maxHeight / settingPlaceholder.height,
+            1, // need to add this constraint, otherwise the image will be scaled up to the window's height or width when it is smaller than the window dimensions.
           );
           return scale;
         }
