@@ -730,7 +730,7 @@ export default function Page(): JSX.Element {
       {/* Simplified Sidebar Controls */}
       <div
         id='sidebar-container'
-        className='w-20 space-y-6 p-4 bg-gray-100 rounded-lg'
+        className='w-20 space-y-6 p-4 bg-gray-100 rounded-lg h-[calc(100vh-2rem)] overflow-y-auto sticky top-4'
       >
         <div className='flex flex-col items-center gap-4'>
           {/* select meme template */}
@@ -786,8 +786,10 @@ export default function Page(): JSX.Element {
         </div>
       </div>
 
-      <div id='panel-container'>
-        {/* Text Outside Configuration Panel */}
+      <div
+        id='panel-container'
+        className='h-[calc(100vh-2rem)] overflow-y-auto  sticky top-4'
+      >
         {showTextOutsideConfig && (
           <div className='w-64 bg-white p-4 border border-gray-200 rounded-lg'>
             <h3 className='text-lg font-semibold mb-4'>
