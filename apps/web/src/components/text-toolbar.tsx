@@ -180,7 +180,7 @@ export function TextToolbar({
 
   return (
     <TooltipProvider>
-      <div className='bg-white shadow-lg rounded-lg p-2 flex items-center gap-1'>
+      <div className='bg-white shadow-lg rounded-lg p-2 flex items-center gap-1 border border-gray-200'>
         {/* Font Family Selector */}
         <Popover open={fontFamilyOpen} onOpenChange={setFontFamilyOpen}>
           <Tooltip>

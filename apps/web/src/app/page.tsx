@@ -730,7 +730,7 @@ export default function Page(): JSX.Element {
       {/* Simplified Sidebar Controls */}
       <div
         id='sidebar-container'
-        className='w-20 space-y-6 p-4 bg-gray-100 rounded-lg h-[calc(100vh-2rem)] overflow-y-auto sticky top-4'
+        className='w-20 space-y-6 p-4 bg-gray-100 rounded-lg h-[calc(100vh-2rem)] overflow-y-auto sticky top-2'
       >
         <div className='flex flex-col items-center gap-4'>
           {/* select meme template */}
@@ -788,7 +788,7 @@ export default function Page(): JSX.Element {
 
       <div
         id='panel-container'
-        className='h-[calc(100vh-2rem)] overflow-y-auto  sticky top-4'
+        className='h-[calc(100vh-2rem)] overflow-y-auto  sticky top-2'
       >
         {showTextOutsideConfig && (
           <div className='w-64 bg-white p-4 border border-gray-200 rounded-lg'>
@@ -843,7 +843,10 @@ export default function Page(): JSX.Element {
       </div>
 
       <div id='workspace-container' className='flex flex-col'>
-        <div id='text-toolbar-container'>
+        <div
+          id='editing-toolbar-container'
+          className='sticky top-2 z-10 bg-white shadow-sm'
+        >
           {/* Text Formatting Toolbar - Only shown when text is selected */}
           {showTextToolbar && (
             <TextToolbar
@@ -875,7 +878,6 @@ export default function Page(): JSX.Element {
           {/* 
         The HTML <canvas> element is the actual rendering surface required by the browser to draw graphics. Fabric.js works as a wrapper/library around this native element - it can't exist without it. In short, canvas element is mendatory for fabricjs to work.
         */}
-          {/* TODO(today): fix the positions of sidebars and panels for preventing them scrolling down with canvas's scroll event */}
           <canvas
             id='canvas'
             ref={canvasRef}
