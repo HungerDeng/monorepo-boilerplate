@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  Canvas,
-  FabricImage,
-  Rect,
-  Shadow,
-  Textbox,
-  TOriginX,
-  TOriginY,
-} from 'fabric';
+import { Canvas, FabricImage, Rect, Shadow, Textbox } from 'fabric';
 import {
   Brush,
   CloudUpload,
@@ -606,30 +598,60 @@ export default function Page(): JSX.Element {
 
         // Add text boxes with scaled positions
         settingPlaceholder.textBoxes.forEach((textBox) => {
-          let left = img.left! + textBox.left * scale; // Reference image's left position
-          let top = img.top! + textBox.top * scale; // Reference image's top position
-          let originX = 'left';
-          let originY = 'top';
-          if (textBox.rotation !== 0) {
-            left = img.left! + textBox.left * scale;
-            top = img.top! + (textBox.top + textBox.height / 2) * scale; //add half height to center the textbox.
-            // rotation center is controlled by the originX and originY properties. When the textbox needs to be rotated, different originX-originY pairs produce different UX appearance. After comparing the different pairs, I found what pair produces the best one is originX: 'left', originY: 'center'.
-            originX = 'left';
-            originY = 'center';
-          }
+          const left = img.left! + textBox.left * scale;
+          const top = img.top! + textBox.top * scale;
+          const textBoxWidth = textBox.width * scale;
+          const textBoxHeight = textBox.height * scale;
+          const placeholderRect = new Rect({
+            left: left,
+            top: top,
+            width: textBoxWidth,
+            height: textBoxHeight,
+            fill: 'gray',
+            originX: 'left',
+            originY: 'top',
+            selectable: false,
+          });
+          placeholderRect.setCoords();
+          placeholderRect.rotate(textBox.rotation);
+          fabricCanvas.current!.add(placeholderRect);
+
           const text = new Textbox('Edit me', {
             left: left,
             top: top,
-            width: textBox.width * scale,
-            height: textBox.height * scale,
-            originX: originX as TOriginX,
-            originY: originY as TOriginY,
-            angle: textBox.rotation,
+            width: textBoxWidth,
+            originX: 'left',
+            originY: 'top',
             shadow: defaultTextProps.shadow,
             fontSize: 30, // TODO(today): adjust the font size based on the textbox's width and height dynamically.
-            fill: 'black',
+            fill: 'white',
+            backgroundColor: 'green',
             fontFamily: defaultTextProps.fontFamily,
+            padding: 0,
+            height: undefined,
           });
+          text.setCoords();
+          text.rotate(textBox.rotation);
+          fabricCanvas.current!.add(text);
+
+          // adjust the text to fit the textbox
+          // text.on('changed', () => {
+          //   if (text.width > textBoxWidth) {
+          //     // shrink the larger text to fit the textbox
+          //     text.fontSize *= textBoxWidth / (text.width + 1);
+          //     text.left = left;
+          //     text.top = top;
+          //     text.width = textBoxWidth;
+          //     text.setCoords();
+          //   }
+          //   // if (text.height > textHeight) {
+          //   //   text.fontSize *= textHeight / (text.height + 1);
+          //   //   text.height = textHeight;
+          //   //   text.left = left;
+          //   //   text.top = top;
+          //   //   text.setCoords();
+          //   // }
+          // });
 
           // Add hover effects like other objects
           text.on('mouseover', () => {
@@ -646,8 +668,6 @@ export default function Page(): JSX.Element {
           text.on('mousedown', () =>
             text.canvas?.clearContext(text.canvas.contextTop),
           );
-
-          fabricCanvas.current!.add(text);
         });
         fabricCanvas.current!.renderAll();
         setMemeTemplateWidth(fabricCanvas.current!.width);
