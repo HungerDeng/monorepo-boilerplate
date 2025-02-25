@@ -144,6 +144,9 @@ importers:
       '@types/react-color':
         specifier: ^3.0.13
         version: 3.0.13(@types/react@18.2.61)
+      '@types/react-textfit':
+        specifier: ^1.1.4
+        version: 1.1.4
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -164,7 +167,7 @@ importers:
         version: 0.475.0(react@18.2.0)
       next:
         specifier: ^14.2.3
-        version: 14.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.79.1)
+        version: 14.2.3(@babel/core@7.25.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.79.1)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -182,7 +185,7 @@ importers:
         version: 3.0.1
       tailwindcss-animate:
         specifier: ^1.0.7
-        version: 1.0.7
+        version: 1.0.7(tailwindcss@3.4.1(ts-node@10.9.2(@swc/core@1.7.26)(@types/node@20.11.24)(typescript@5.4.5)))
     devDependencies:
       '@next/eslint-plugin-next':
         specifier: ^14.2.3
@@ -2202,6 +2205,9 @@ packages:
 
   '@types/react-dom@18.2.19':
     resolution: {integrity: sha512-aZvQL6uUbIJpjZk4U8JZGbau9KDeAwMfmhyWorxgBkqDIEf6ROjRozcmPIicqsUwPUjbkDfHKgGee1Lq65APcA==}
+
+  '@types/react-textfit@1.1.4':
+    resolution: {integrity: sha512-tj3aMfbzi12r2yWn4Kzm9IkEHz7uaBU57P19FhzEA+Sr+ex0EuJezAYtBRMW3HjxylJ8PtmwpWgPT/t+j0H6zA==}
 
   '@types/react@18.2.48':
     resolution: {integrity: sha512-qboRCl6Ie70DQQG9hhNREz81jqC1cs9EVNcjQ1AU+jH6NFfSAhVVbrrY/+nSF+Bsk4AOwm9Qa61InvMCyV+H3w==}
@@ -7702,6 +7708,10 @@ snapshots:
     dependencies:
       '@types/react': 18.2.61
 
+  '@types/react-textfit@1.1.4':
+    dependencies:
+      '@types/react': 18.2.61
+
   '@types/react@18.2.48':
     dependencies:
       '@types/prop-types': 15.7.11
@@ -9747,7 +9757,7 @@ snapshots:
       sax: 1.4.1
     optional: true
 
-  next@14.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.79.1):
+  next@14.2.3(@babel/core@7.25.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.79.1):
     dependencies:
       '@next/env': 14.2.3
       '@swc/helpers': 0.5.5
@@ -9757,7 +9767,7 @@ snapshots:
       postcss: 8.4.31
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      styled-jsx: 5.1.1(react@18.2.0)
+      styled-jsx: 5.1.1(@babel/core@7.25.2)(react@18.2.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 14.2.3
       '@next/swc-darwin-x64': 14.2.3
@@ -10532,10 +10542,12 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  styled-jsx@5.1.1(react@18.2.0):
+  styled-jsx@5.1.1(@babel/core@7.25.2)(react@18.2.0):
     dependencies:
       client-only: 0.0.1
       react: 18.2.0
+    optionalDependencies:
+      '@babel/core': 7.25.2
 
   sucrase@3.34.0:
     dependencies:
@@ -10596,8 +10608,6 @@ snapshots:
   tailwind-merge@2.5.2: {}
 
   tailwind-merge@3.0.1: {}
-
-  tailwindcss-animate@1.0.7: {}
 
   tailwindcss-animate@1.0.7(tailwindcss@3.4.1(ts-node@10.9.2(@swc/core@1.7.26)(@types/node@20.11.24)(typescript@5.4.5))):
     dependencies:
