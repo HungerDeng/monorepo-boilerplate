@@ -75,8 +75,9 @@ export default function TwoButtonsPage() {
           }}
         >
           <Textfit
+            id={textEditorPlaceholderId}
             mode='multi'
-            className={`w-full h-full flex ${
+            className={`invisible w-full h-full flex ${
               verticalTextAlign === 'top'
                 ? 'items-start'
                 : verticalTextAlign === 'center'
@@ -130,7 +131,6 @@ export default function TwoButtonsPage() {
           </Textfit>
 
           <div
-            id={textEditorPlaceholderId}
             className={`absolute left-0 top-0 w-full h-full flex ${
               verticalTextAlign === 'top'
                 ? 'items-start'
