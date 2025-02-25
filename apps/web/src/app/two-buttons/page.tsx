@@ -11,7 +11,8 @@ export default function TwoButtonsPage() {
   const [fontColor, setFontColor] = useState('#000000');
   const [underline, setUnderline] = useState(false);
   const [fontFamily, setFontFamily] = useState('Arial');
-  const [textAlign, setTextAlign] = useState('center');
+  const [horizontalTextAlign, setHorizontalTextAlign] = useState('center');
+  const [verticalTextAlign, setVerticalTextAlign] = useState('center');
   const [letterSpacing, setLetterSpacing] = useState(0);
   const [strokeWidth, setStrokeWidth] = useState(0);
   const [strokeColor, setStrokeColor] = useState('#000000');
@@ -68,13 +69,22 @@ export default function TwoButtonsPage() {
             transform: `rotate(349deg)`,
           }}
         >
-          <Textfit mode='multi' className='w-full h-full'>
+          <Textfit
+            mode='multi'
+            className={`w-full h-full flex ${
+              verticalTextAlign === 'top'
+                ? 'items-start'
+                : verticalTextAlign === 'center'
+                  ? 'items-center'
+                  : 'items-end'
+            }`}
+          >
             <div
               style={{
                 color: fontColor,
                 textDecoration: underline ? 'underline' : 'none',
                 fontFamily,
-                textAlign: textAlign as 'left' | 'center' | 'right',
+                textAlign: horizontalTextAlign as 'left' | 'center' | 'right',
                 letterSpacing: `${letterSpacing}px`,
                 WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
                 lineHeight: `${lineHeight}em`,
@@ -188,15 +198,32 @@ export default function TwoButtonsPage() {
           </div>
 
           <div className='flex flex-col gap-2'>
-            <label className='text-sm font-medium'>Text Alignment</label>
+            <label className='text-sm font-medium'>
+              Horizontal Text Alignment
+            </label>
             <select
-              value={textAlign}
-              onChange={(e) => setTextAlign(e.target.value)}
+              value={horizontalTextAlign}
+              onChange={(e) => setHorizontalTextAlign(e.target.value)}
               className='p-2 border rounded'
             >
               <option value='left'>Left</option>
               <option value='center'>Center</option>
               <option value='right'>Right</option>
+            </select>
+          </div>
+
+          <div className='flex flex-col gap-2'>
+            <label className='text-sm font-medium'>
+              Vertical Text Alignment
+            </label>
+            <select
+              value={verticalTextAlign}
+              onChange={(e) => setVerticalTextAlign(e.target.value)}
+              className='p-2 border rounded'
+            >
+              <option value='top'>Top</option>
+              <option value='center'>Center</option>
+              <option value='bottom'>Bottom</option>
             </select>
           </div>
 
