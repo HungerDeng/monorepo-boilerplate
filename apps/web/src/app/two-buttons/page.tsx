@@ -29,14 +29,20 @@ export default function TwoButtonsPage() {
   const [textShadowColor, setTextShadowColor] = useState('#000000');
   const [backgroundColor, setBackgroundColor] = useState('transparent');
 
+  const textEditorPlaceholderId = 'te-ph';
+
   const [text, setText] = useState('Edit Me.');
   const [textFontSize, setTextFontSize] = useState(0);
   const handleExport = async () => {
     if (!editorWorkspaceRef.current) return;
 
     try {
+      const filter = (node: HTMLElement) => {
+        return !node.id?.includes(textEditorPlaceholderId);
+      };
       const dataUrl = await toPng(editorWorkspaceRef.current, {
         cacheBust: true,
+        filter: filter,
       });
       const link = document.createElement('a');
       link.download = 'meme-export.png';
@@ -105,6 +111,7 @@ export default function TwoButtonsPage() {
           </Textfit>
 
           <div
+            id={textEditorPlaceholderId}
             className={`absolute left-0 top-0 w-full h-full flex ${
               verticalTextAlign === 'top'
                 ? 'items-start'
@@ -119,7 +126,7 @@ export default function TwoButtonsPage() {
                 contentEditable
                 suppressContentEditableWarning
                 style={{
-                  color: fontColor,
+                  color: 'red',
                   textDecoration: underline ? 'underline' : 'none',
                   fontFamily,
                   textAlign: horizontalTextAlign as 'left' | 'center' | 'right',
