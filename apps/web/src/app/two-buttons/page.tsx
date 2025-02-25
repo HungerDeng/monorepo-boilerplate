@@ -84,7 +84,26 @@ export default function TwoButtonsPage() {
                   : 'items-end'
             }`}
             onReady={(e) => {
+              // TODO: [Textfit Font Scaling] Investigate binary search implementation in resize fontSize algorithm
+              //
+              // Problem: Font size adjustments exhibit non-linear jumps when text exceeds container bounds.
+              // - Observed 2px decrements after reaching critical threshold (13px → 11px -> 9px -> 7px -> ...)
+              // - Overflow state persists between size transitions
+              //
+              // Reproduction steps:
+              // 1. Input long continuous string (e.g., "range?.insertNode(document.createTextNode(text));")
+              // 2. Observe gradual font scaling until threshold (13px)
+              // 3. Continue input → overflow occurs without immediately resizing
+              // 4. Subsequent input triggers abrupt 2px decrements
+              //
+              // Suspected cause: Binary search implementation in font scaling algorithm may:
+              // - Use improper bounds calculation
+              // - Lack debouncing between resize calculations
+              // - Have minimum step size constraints
+              //
+              // Conclusion: the bug is not a top priority now.
               if (e != textFontSize) {
+                // console.log('onReady textFontSize changed, update: ', e);
                 setTextFontSize(e);
               }
             }}
