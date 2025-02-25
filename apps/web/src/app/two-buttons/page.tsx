@@ -126,7 +126,7 @@ export default function TwoButtonsPage() {
                 contentEditable
                 suppressContentEditableWarning
                 style={{
-                  color: 'red',
+                  color: fontColor,
                   textDecoration: underline ? 'underline' : 'none',
                   fontFamily,
                   textAlign: horizontalTextAlign as 'left' | 'center' | 'right',
@@ -139,6 +139,18 @@ export default function TwoButtonsPage() {
                   outline: `${outlineWidth}px ${outlineStyle} ${outlineColor}`,
                   textShadow: `${textShadowX}px ${textShadowY}px ${textShadowBlur}px ${textShadowColor}`,
                   backgroundColor: backgroundColor,
+                }}
+                onPaste={(e) => {
+                  e.preventDefault();
+                  // when pasting text from clipboard, we need to strip out any existing formatting styles from the pasted text
+                  const text = e.clipboardData.getData('text/plain');
+                  const range = document.getSelection()?.getRangeAt(0);
+                  range?.deleteContents();
+                  range?.insertNode(document.createTextNode(text));
+
+                  // need to manually trigger input update event (onInput) to update the textFontSize
+                  const event = new Event('input', { bubbles: true });
+                  e.currentTarget.dispatchEvent(event);
                 }}
                 onInput={(e) => {
                   setText(e.currentTarget.textContent || '');
