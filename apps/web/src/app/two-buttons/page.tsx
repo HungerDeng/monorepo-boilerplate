@@ -28,6 +28,9 @@ export default function TwoButtonsPage() {
   const [textShadowBlur, setTextShadowBlur] = useState(0);
   const [textShadowColor, setTextShadowColor] = useState('#000000');
   const [backgroundColor, setBackgroundColor] = useState('transparent');
+
+  const [text, setText] = useState('Edit Me.');
+  const [textFontSize, setTextFontSize] = useState(0);
   const handleExport = async () => {
     if (!editorWorkspaceRef.current) return;
 
@@ -45,12 +48,8 @@ export default function TwoButtonsPage() {
   };
 
   return (
-    <div className='flex gap-4 justify-center items-center min-h-screen bg-gray-100'>
-      <div
-        id='editor-workspace'
-        className='relative h-[calc(100vh-2rem)] overflow-y-auto sticky top-2'
-        ref={editorWorkspaceRef}
-      >
+    <div className='flex gap-4 justify-center items-start min-h-screen bg-gray-100'>
+      <div id='editor-workspace' className='relative' ref={editorWorkspaceRef}>
         <img
           src='/Two-Buttons-meme-1g8my4.jpg'
           alt='Two Buttons Meme'
@@ -78,6 +77,11 @@ export default function TwoButtonsPage() {
                   ? 'items-center'
                   : 'items-end'
             }`}
+            onReady={(e) => {
+              if (e != textFontSize) {
+                setTextFontSize(e);
+              }
+            }}
           >
             <div
               style={{
@@ -96,9 +100,47 @@ export default function TwoButtonsPage() {
                 backgroundColor: backgroundColor,
               }}
             >
-              Edit Me.
+              {text}
             </div>
           </Textfit>
+
+          <div
+            className={`absolute left-0 top-0 w-full h-full flex ${
+              verticalTextAlign === 'top'
+                ? 'items-start'
+                : verticalTextAlign === 'center'
+                  ? 'items-center'
+                  : 'items-end'
+            }`}
+            style={{ fontSize: textFontSize }}
+          >
+            <div style={{ display: 'block' }}>
+              <div
+                contentEditable
+                suppressContentEditableWarning
+                style={{
+                  color: fontColor,
+                  textDecoration: underline ? 'underline' : 'none',
+                  fontFamily,
+                  textAlign: horizontalTextAlign as 'left' | 'center' | 'right',
+                  letterSpacing: `${letterSpacing}px`,
+                  WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
+                  lineHeight: `${lineHeight}em`,
+                  opacity: textOpacity,
+                  fontStyle: isItalic ? 'italic' : 'normal',
+                  fontWeight: isBold ? 'bold' : 'normal',
+                  outline: `${outlineWidth}px ${outlineStyle} ${outlineColor}`,
+                  textShadow: `${textShadowX}px ${textShadowY}px ${textShadowBlur}px ${textShadowColor}`,
+                  backgroundColor: backgroundColor,
+                }}
+                onInput={(e) => {
+                  setText(e.currentTarget.textContent || '');
+                }}
+              >
+                Edit Me.
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Second button rectangle */}
