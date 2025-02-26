@@ -1,13 +1,14 @@
 'use client';
 
+import { DndContext, MouseSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { Coordinates } from '@dnd-kit/core/dist/types/coordinates';
 import { toPng } from 'html-to-image';
 import { useRef, useState } from 'react';
 import { Textfit } from 'react-textfit';
+import Draggable from 'src/components/draggable';
 
 export default function TwoButtonsPage() {
   const editorWorkspaceRef = useRef<HTMLDivElement>(null);
-  const [rectWidth, setRectWidth] = useState(143.26530612244898);
-  const [rectHeight, setRectHeight] = useState(80.81632653061224);
   const [fontColor, setFontColor] = useState('#000000');
   const [underline, setUnderline] = useState(false);
   const [fontFamily, setFontFamily] = useState('Arial');
@@ -53,6 +54,17 @@ export default function TwoButtonsPage() {
     }
   };
 
+  const defaultCoordinates = {
+    x: 55.10204081632653, //left
+    y: 84.48979591836735, //top
+  };
+  const [rectWidth, setRectWidth] = useState(187.3469387755102);
+  const [rectHeight, setRectHeight] = useState(90.61224489795919);
+  const [{ x, y }, setCoordinates] = useState<Coordinates>(defaultCoordinates);
+  // const [rotation, setRotation] = useState(349);
+  const mouseSensor = useSensor(MouseSensor);
+  const sensors = useSensors(mouseSensor);
+
   return (
     <div className='flex gap-4 justify-center items-start min-h-screen bg-gray-100'>
       <div id='editor-workspace' className='relative' ref={editorWorkspaceRef}>
@@ -64,86 +76,61 @@ export default function TwoButtonsPage() {
         />
 
         {/* First button rectangle */}
-        <div
-          className='absolute bg-gray-500/50'
-          style={{
-            height: 90.61224489795919,
-            width: 187.3469387755102,
-            left: 55.10204081632653,
-            top: 84.48979591836735,
-            transform: `rotate(349deg)`,
+        {/* dnd-kit usage refer to: https://github.com/clauderic/dnd-kit/blob/master/stories/1%20-%20Core/Draggable/1-Draggable.story.tsx#L112 */}
+        <DndContext
+          sensors={sensors}
+          onDragEnd={({ delta }) => {
+            setCoordinates((prev) => ({
+              x: prev.x + delta.x,
+              y: prev.y + delta.y,
+            }));
           }}
         >
-          <Textfit
-            id={textEditorPlaceholderId}
-            mode='multi'
-            className={`invisible w-full h-full flex ${
-              verticalTextAlign === 'top'
-                ? 'items-start'
-                : verticalTextAlign === 'center'
-                  ? 'items-center'
-                  : 'items-end'
-            }`}
-            onReady={(e) => {
-              // TODO: [Textfit Font Scaling] Investigate binary search implementation in resize fontSize algorithm
-              //
-              // Problem: Font size adjustments exhibit non-linear jumps when text exceeds container bounds.
-              // - Observed 2px decrements after reaching critical threshold (13px → 11px -> 9px -> 7px -> ...)
-              // - Overflow state persists between size transitions
-              //
-              // Reproduction steps:
-              // 1. Input long continuous string (e.g., "range?.insertNode(document.createTextNode(text));")
-              // 2. Observe gradual font scaling until threshold (13px)
-              // 3. Continue input → overflow occurs without immediately resizing
-              // 4. Subsequent input triggers abrupt 2px decrements
-              //
-              // Suspected cause: Binary search implementation in font scaling algorithm may:
-              // - Use improper bounds calculation
-              // - Lack debouncing between resize calculations
-              // - Have minimum step size constraints
-              //
-              // Conclusion: the bug is not a top priority now.
-              if (e != textFontSize) {
-                // console.log('onReady textFontSize changed, update: ', e);
-                setTextFontSize(e);
-              }
-            }}
+          <Draggable
+            left={x}
+            top={y}
+            rotation={349}
+            width={rectWidth}
+            height={rectHeight}
+            className='absolute bg-gray-500/50'
           >
-            <div
-              style={{
-                color: fontColor,
-                textDecoration: underline ? 'underline' : 'none',
-                fontFamily,
-                textAlign: horizontalTextAlign as 'left' | 'center' | 'right',
-                letterSpacing: `${letterSpacing}px`,
-                WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
-                lineHeight: `${lineHeight}em`,
-                opacity: textOpacity,
-                fontStyle: isItalic ? 'italic' : 'normal',
-                fontWeight: isBold ? 'bold' : 'normal',
-                outline: `${outlineWidth}px ${outlineStyle} ${outlineColor}`,
-                textShadow: `${textShadowX}px ${textShadowY}px ${textShadowBlur}px ${textShadowColor}`,
-                backgroundColor: backgroundColor,
+            {/* Textfit is invisible, because we just use it for calculating suitabletextFontSize */}
+            <Textfit
+              id={textEditorPlaceholderId}
+              mode='multi'
+              className={`invisible w-full h-full flex ${
+                verticalTextAlign === 'top'
+                  ? 'items-start'
+                  : verticalTextAlign === 'center'
+                    ? 'items-center'
+                    : 'items-end'
+              }`}
+              onReady={(e) => {
+                // TODO: [Textfit Font Scaling] Investigate binary search implementation in resize fontSize algorithm
+                //
+                // Problem: Font size adjustments exhibit non-linear jumps when text exceeds container bounds.
+                // - Observed 2px decrements after reaching critical threshold (13px → 11px -> 9px -> 7px -> ...)
+                // - Overflow state persists between size transitions
+                //
+                // Reproduction steps:
+                // 1. Input long continuous string (e.g., "range?.insertNode(document.createTextNode(text));")
+                // 2. Observe gradual font scaling until threshold (13px)
+                // 3. Continue input → overflow occurs without immediately resizing
+                // 4. Subsequent input triggers abrupt 2px decrements
+                //
+                // Suspected cause: Binary search implementation in font scaling algorithm may:
+                // - Use improper bounds calculation
+                // - Lack debouncing between resize calculations
+                // - Have minimum step size constraints
+                //
+                // Conclusion: the bug is not a top priority now.
+                if (e != textFontSize) {
+                  // console.log('onReady textFontSize changed, update: ', e);
+                  setTextFontSize(e);
+                }
               }}
             >
-              {text}
-            </div>
-          </Textfit>
-
-          <div
-            className={`absolute left-0 top-0 w-full h-full flex ${
-              verticalTextAlign === 'top'
-                ? 'items-start'
-                : verticalTextAlign === 'center'
-                  ? 'items-center'
-                  : 'items-end'
-            }`}
-            style={{ fontSize: textFontSize }}
-          >
-            <div style={{ display: 'block' }}>
               <div
-                contentEditable
-                suppressContentEditableWarning
                 style={{
                   color: fontColor,
                   textDecoration: underline ? 'underline' : 'none',
@@ -159,27 +146,65 @@ export default function TwoButtonsPage() {
                   textShadow: `${textShadowX}px ${textShadowY}px ${textShadowBlur}px ${textShadowColor}`,
                   backgroundColor: backgroundColor,
                 }}
-                onPaste={(e) => {
-                  e.preventDefault();
-                  // when pasting text from clipboard, we need to strip out any existing formatting styles from the pasted text
-                  const text = e.clipboardData.getData('text/plain');
-                  const range = document.getSelection()?.getRangeAt(0);
-                  range?.deleteContents();
-                  range?.insertNode(document.createTextNode(text));
-
-                  // need to manually trigger input update event (onInput) to update the textFontSize
-                  const event = new Event('input', { bubbles: true });
-                  e.currentTarget.dispatchEvent(event);
-                }}
-                onInput={(e) => {
-                  setText(e.currentTarget.textContent || '');
-                }}
               >
-                Edit Me.
+                {text}
+              </div>
+            </Textfit>
+
+            <div
+              className={`absolute left-0 top-0 w-full h-full flex ${
+                verticalTextAlign === 'top'
+                  ? 'items-start'
+                  : verticalTextAlign === 'center'
+                    ? 'items-center'
+                    : 'items-end'
+              }`}
+              style={{ fontSize: textFontSize }}
+            >
+              <div style={{ display: 'block' }}>
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  style={{
+                    color: fontColor,
+                    textDecoration: underline ? 'underline' : 'none',
+                    fontFamily,
+                    textAlign: horizontalTextAlign as
+                      | 'left'
+                      | 'center'
+                      | 'right',
+                    letterSpacing: `${letterSpacing}px`,
+                    WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
+                    lineHeight: `${lineHeight}em`,
+                    opacity: textOpacity,
+                    fontStyle: isItalic ? 'italic' : 'normal',
+                    fontWeight: isBold ? 'bold' : 'normal',
+                    outline: `${outlineWidth}px ${outlineStyle} ${outlineColor}`,
+                    textShadow: `${textShadowX}px ${textShadowY}px ${textShadowBlur}px ${textShadowColor}`,
+                    backgroundColor: backgroundColor,
+                  }}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                    // when pasting text from clipboard, we need to strip out any existing formatting styles from the pasted text
+                    const text = e.clipboardData.getData('text/plain');
+                    const range = document.getSelection()?.getRangeAt(0);
+                    range?.deleteContents();
+                    range?.insertNode(document.createTextNode(text));
+
+                    // need to manually trigger input update event (onInput) to update the textFontSize
+                    const event = new Event('input', { bubbles: true });
+                    e.currentTarget.dispatchEvent(event);
+                  }}
+                  onInput={(e) => {
+                    setText(e.currentTarget.textContent || '');
+                  }}
+                >
+                  Edit Me.
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </Draggable>
+        </DndContext>
 
         {/* Second button rectangle */}
         <div
