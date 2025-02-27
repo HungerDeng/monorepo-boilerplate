@@ -13,10 +13,12 @@ const DRRHandles = ({
   isTextEditorFocused,
   onRotateHandleMouseDown,
   isRotating,
+  onResizeHandleMouseDown,
 }: {
   isTextEditorFocused: boolean;
   onRotateHandleMouseDown: (e: React.MouseEvent) => void;
   isRotating: boolean;
+  onResizeHandleMouseDown: (handleType: string, e: React.MouseEvent) => void;
 }) => {
   const borderColor = 'border-gray-800';
   const borderWidth = 'border-[1px]';
@@ -61,6 +63,7 @@ const DRRHandles = ({
         className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
           isTextEditorFocused ? 'visible' : 'invisible'
         } `}
+        onMouseDown={(e) => onResizeHandleMouseDown('top', e)}
       />
       {/* Center-bottom handle */}
       <div
@@ -68,6 +71,7 @@ const DRRHandles = ({
         className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
           isTextEditorFocused ? 'visible' : 'invisible'
         } `}
+        onMouseDown={(e) => onResizeHandleMouseDown('bottom', e)}
       />
       {/* Left-center handle */}
       <div
@@ -75,6 +79,7 @@ const DRRHandles = ({
         className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
           isTextEditorFocused ? 'visible' : 'invisible'
         } `}
+        onMouseDown={(e) => onResizeHandleMouseDown('left', e)}
       />
       {/* Right-center handle */}
       <div
@@ -82,6 +87,7 @@ const DRRHandles = ({
         className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
           isTextEditorFocused ? 'visible' : 'invisible'
         } `}
+        onMouseDown={(e) => onResizeHandleMouseDown('right', e)}
       />
 
       {/* rotate handle */}
@@ -202,6 +208,62 @@ export default function TwoButtonsPage() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
       setIsRotating(false);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleResizeMouseDown = (handleType: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const initialWidth = rectWidth;
+    const initialHeight = rectHeight;
+    const initialX = x;
+    const initialY = y;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const currentX = moveEvent.clientX;
+      const currentY = moveEvent.clientY;
+      const deltaX = currentX - startX;
+      const deltaY = currentY - startY;
+
+      let newWidth = initialWidth;
+      let newHeight = initialHeight;
+      let newX = initialX;
+      let newY = initialY;
+
+      switch (handleType) {
+        case 'top':
+          newHeight = initialHeight - deltaY;
+          newY = initialY + deltaY;
+          break;
+        case 'bottom':
+          newHeight = initialHeight + deltaY;
+          break;
+        case 'left':
+          newWidth = initialWidth - deltaX;
+          newX = initialX + deltaX;
+          break;
+        case 'right':
+          newWidth = initialWidth + deltaX;
+          break;
+      }
+
+      if (newWidth > 0) {
+        setRectWidth(newWidth);
+        setCoordinates({ x: newX, y: newY });
+      }
+      if (newHeight > 0) {
+        setRectHeight(newHeight);
+        setCoordinates({ x: newX, y: newY });
+      }
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -369,6 +431,7 @@ export default function TwoButtonsPage() {
             <DRRHandles
               isTextEditorFocused={isTextEditorFocused}
               onRotateHandleMouseDown={handleRotateMouseDown}
+              onResizeHandleMouseDown={handleResizeMouseDown}
               isRotating={isRotating}
             />
           </Draggable>
@@ -378,8 +441,8 @@ export default function TwoButtonsPage() {
         <div
           className='absolute bg-gray-500/50'
           style={{
-            height: rectHeight,
-            width: rectWidth,
+            height: 80.81632653061224,
+            width: 143.26530612244898,
             left: 273.0612244897959,
             top: 55.10204081632653,
             transform: `rotate(352deg)`,
