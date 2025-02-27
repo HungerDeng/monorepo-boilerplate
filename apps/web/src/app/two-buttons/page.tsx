@@ -7,6 +7,52 @@ import { useRef, useState } from 'react';
 import { Textfit } from 'react-textfit';
 import Draggable, { MouseSensor } from 'src/components/draggable';
 
+const CornerHandles = () => {
+  const borderColor = 'border-gray-800';
+  const borderWidth = 'border-[1px]';
+  const bgColor = 'bg-stone-50';
+  const hoverOpacity = 'opacity-100';
+  return (
+    <div className='absolute left-0 top-0 w-full h-full'>
+      {/* scale corner handles */}
+      {/* Top-left corner square */}
+      <div
+        className={`border-2 absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 opacity-0 group-hover:${hoverOpacity}`}
+      />
+      {/* Top-right corner square */}
+      <div
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 opacity-0 group-hover:${hoverOpacity}`}
+      />
+      {/* Bottom-left corner square */}
+      <div
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 opacity-0 group-hover:${hoverOpacity}`}
+      />
+      {/* Bottom-right corner square */}
+      <div
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 opacity-0 group-hover:${hoverOpacity}`}
+      />
+
+      {/* resize corner handles */}
+      {/* Center-top handle */}
+      <div
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 opacity-0 group-hover:${hoverOpacity}`}
+      />
+      {/* Center-bottom handle */}
+      <div
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 opacity-0 group-hover:${hoverOpacity}`}
+      />
+      {/* Left-center handle */}
+      <div
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:${hoverOpacity}`}
+      />
+      {/* Right-center handle */}
+      <div
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:${hoverOpacity}`}
+      />
+    </div>
+  );
+};
+
 export default function TwoButtonsPage() {
   const editorWorkspaceRef = useRef<HTMLDivElement>(null);
   const [fontColor, setFontColor] = useState('#000000');
@@ -92,8 +138,10 @@ export default function TwoButtonsPage() {
             rotation={349}
             width={rectWidth}
             height={rectHeight}
-            className='absolute bg-gray-500/50'
+            className='absolute bg-green-200 hover:outline-[1.5px] hover:outline-gray-800 hover:outline-dashed group'
           >
+            <CornerHandles />
+
             {/* Textfit is invisible, because we just use it for calculating suitabletextFontSize */}
             <Textfit
               id={textEditorPlaceholderId}
@@ -150,7 +198,6 @@ export default function TwoButtonsPage() {
                 {text}
               </div>
             </Textfit>
-
             <div
               className={`absolute left-0 top-0 w-full h-full flex ${
                 verticalTextAlign === 'top'
@@ -159,7 +206,6 @@ export default function TwoButtonsPage() {
                     ? 'items-center'
                     : 'items-end'
               }`}
-              style={{ fontSize: textFontSize }}
             >
               <div style={{ display: 'block' }}>
                 <div
@@ -170,6 +216,7 @@ export default function TwoButtonsPage() {
                     color: fontColor,
                     textDecoration: underline ? 'underline' : 'none',
                     fontFamily,
+                    fontSize: textFontSize,
                     textAlign: horizontalTextAlign as
                       | 'left'
                       | 'center'
