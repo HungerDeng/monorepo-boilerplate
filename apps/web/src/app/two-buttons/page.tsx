@@ -21,6 +21,7 @@ const CornerHandles = ({
       {/* scale corner handles */}
       {/* Top-left corner square */}
       <div
+        data-no-dnd
         className={`border-2 absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 ${
           isTextEditorFocused
             ? 'opacity-100'
@@ -29,6 +30,7 @@ const CornerHandles = ({
       />
       {/* Top-right corner square */}
       <div
+        data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 ${
           isTextEditorFocused
             ? 'opacity-100'
@@ -37,6 +39,7 @@ const CornerHandles = ({
       />
       {/* Bottom-left corner square */}
       <div
+        data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 ${
           isTextEditorFocused
             ? 'opacity-100'
@@ -45,6 +48,7 @@ const CornerHandles = ({
       />
       {/* Bottom-right corner square */}
       <div
+        data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 ${
           isTextEditorFocused
             ? 'opacity-100'
@@ -53,8 +57,10 @@ const CornerHandles = ({
       />
 
       {/* resize corner handles */}
+      {/* todo: add resize handles */}
       {/* Center-top handle */}
       <div
+        data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 ${
           isTextEditorFocused
             ? 'opacity-100'
@@ -63,6 +69,7 @@ const CornerHandles = ({
       />
       {/* Center-bottom handle */}
       <div
+        data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 ${
           isTextEditorFocused
             ? 'opacity-100'
@@ -71,6 +78,7 @@ const CornerHandles = ({
       />
       {/* Left-center handle */}
       <div
+        data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 ${
           isTextEditorFocused
             ? 'opacity-100'
@@ -79,6 +87,7 @@ const CornerHandles = ({
       />
       {/* Right-center handle */}
       <div
+        data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 ${
           isTextEditorFocused
             ? 'opacity-100'
@@ -181,8 +190,6 @@ export default function TwoButtonsPage() {
                 : 'hover:outline-gray-800 hover:outline-dashed'
             } group`}
           >
-            <CornerHandles isTextEditorFocused={isTextEditorFocused} />
-
             {/* Textfit is invisible, because we just use it for calculating suitabletextFontSize */}
             <Textfit
               id={textEditorPlaceholderId}
@@ -239,6 +246,8 @@ export default function TwoButtonsPage() {
                 {text}
               </div>
             </Textfit>
+
+            {/* Text editor */}
             <div
               className={`absolute left-0 top-0 w-full h-full flex ${
                 verticalTextAlign === 'top'
@@ -254,6 +263,7 @@ export default function TwoButtonsPage() {
                   contentEditable
                   suppressContentEditableWarning
                   data-no-dnd
+                  className='relative z-10'
                   style={{
                     color: fontColor,
                     textDecoration: underline ? 'underline' : 'none',
@@ -295,6 +305,8 @@ export default function TwoButtonsPage() {
                 </div>
               </div>
             </div>
+
+            <CornerHandles isTextEditorFocused={isTextEditorFocused} />
           </Draggable>
         </DndContext>
 
