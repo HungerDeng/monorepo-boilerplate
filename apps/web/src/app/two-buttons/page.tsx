@@ -310,10 +310,40 @@ export default function TwoButtonsPage() {
         <DndContext
           sensors={sensors}
           onDragEnd={({ delta }) => {
-            setCoordinates((prev) => ({
-              x: prev.x + delta.x,
-              y: prev.y + delta.y,
-            }));
+            const newX = x + delta.x;
+            const newY = y + delta.y;
+            const workspace = document.getElementById('editor-workspace');
+
+            if (workspace) {
+              const { width: workspaceWidth, height: workspaceHeight } =
+                workspace.getBoundingClientRect();
+              const draggableArea = rectWidth * rectHeight;
+
+              // Calculate visible area within workspace
+              const visibleWidth = Math.max(
+                0,
+                Math.min(newX + rectWidth, workspaceWidth) - Math.max(newX, 0),
+              );
+              const visibleHeight = Math.max(
+                0,
+                Math.min(newY + rectHeight, workspaceHeight) -
+                  Math.max(newY, 0),
+              );
+              const visibleArea = visibleWidth * visibleHeight;
+
+              // Show error if less than {threshold * 100 }% of area is visible
+              const threshold = 0.5;
+              if (visibleArea / draggableArea < threshold) {
+                // TODO(today): expose a callback to toast error message
+                console.error(
+                  `It is not allowed to move the text area outside the template area by more than ${threshold * 100}%. BTW, only the area within the meme template area will be rendered when you download.`,
+                );
+                // directly return without updating the coordinates, so the text area will return to the last valid position
+                return;
+              }
+            }
+
+            setCoordinates({ x: newX, y: newY });
           }}
         >
           <Draggable
