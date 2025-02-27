@@ -17,12 +17,12 @@ const CornerHandles = ({
   const bgColor = 'bg-stone-50';
   const hoverOpacity = 'opacity-100';
   return (
-    <div className='absolute left-0 top-0 w-full h-full'>
+    <div className='absolute left-0 top-0 w-full h-full cursor-move'>
       {/* scale corner handles */}
       {/* Top-left corner square */}
       <div
         data-no-dnd
-        className={`border-2 absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 ${
+        className={`border-2 absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 cursor-nwse-resize ${
           isTextEditorFocused
             ? 'opacity-100'
             : `opacity-0 group-hover:${hoverOpacity}`
@@ -31,7 +31,7 @@ const CornerHandles = ({
       {/* Top-right corner square */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 cursor-nesw-resize ${
           isTextEditorFocused
             ? 'opacity-100'
             : `opacity-0 group-hover:${hoverOpacity}`
@@ -40,7 +40,7 @@ const CornerHandles = ({
       {/* Bottom-left corner square */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 cursor-nesw-resize ${
           isTextEditorFocused
             ? 'opacity-100'
             : `opacity-0 group-hover:${hoverOpacity}`
@@ -49,7 +49,7 @@ const CornerHandles = ({
       {/* Bottom-right corner square */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 cursor-nwse-resize ${
           isTextEditorFocused
             ? 'opacity-100'
             : `opacity-0 group-hover:${hoverOpacity}`
@@ -61,7 +61,7 @@ const CornerHandles = ({
       {/* Center-top handle */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
           isTextEditorFocused
             ? 'opacity-100'
             : `opacity-0 group-hover:${hoverOpacity}`
@@ -70,7 +70,7 @@ const CornerHandles = ({
       {/* Center-bottom handle */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
           isTextEditorFocused
             ? 'opacity-100'
             : `opacity-0 group-hover:${hoverOpacity}`
@@ -79,7 +79,7 @@ const CornerHandles = ({
       {/* Left-center handle */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
           isTextEditorFocused
             ? 'opacity-100'
             : `opacity-0 group-hover:${hoverOpacity}`
@@ -88,7 +88,7 @@ const CornerHandles = ({
       {/* Right-center handle */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
           isTextEditorFocused
             ? 'opacity-100'
             : `opacity-0 group-hover:${hoverOpacity}`
@@ -263,7 +263,7 @@ export default function TwoButtonsPage() {
                   contentEditable
                   suppressContentEditableWarning
                   data-no-dnd
-                  className='relative z-10'
+                  className='relative z-10 cursor-text'
                   style={{
                     color: fontColor,
                     textDecoration: underline ? 'underline' : 'none',
