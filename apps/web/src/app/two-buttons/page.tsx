@@ -253,7 +253,7 @@ export default function TwoButtonsPage() {
                     : 'items-end'
               }`}
               onReady={(e) => {
-                // TODO: [Textfit Font Scaling] Investigate binary search implementation in resize fontSize algorithm
+                // TODO(not high priority): [Textfit Font Scaling] Investigate binary search implementation in resize fontSize algorithm
                 //
                 // Problem: Font size adjustments exhibit non-linear jumps when text exceeds container bounds.
                 // - Observed 2px decrements after reaching critical threshold (13px → 11px -> 9px -> 7px -> ...)
@@ -356,6 +356,7 @@ export default function TwoButtonsPage() {
                     if (!relatedTarget?.querySelector('.handle')) {
                       setIsTextEditorFocused(false);
                     } else {
+                      // TODO(not high priority): interacting with the drag handle when the text editor is focused will cause the focus to be lost. But the 'isTextEditorFocused' state is still true, preventing the DRRHandles from becoming invisible. So looks like it's not a big issue now.
                       e.currentTarget.focus();
                     }
                   }}

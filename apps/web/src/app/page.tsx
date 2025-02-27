@@ -111,7 +111,7 @@ export default function Page(): JSX.Element {
       // }
 
       // Improved undo functionality
-      // TODO: need to undo the modification of the text or image properties in the long run, but it's not a high priority task now. Currently, only the undo of deletion is supported.
+      // TODO(not high priority): need to undo the modification of the text or image properties in the long run, but it's not a high priority task now. Currently, only the undo of deletion is supported.
       if (e.key === 'z' && (e.metaKey || e.ctrlKey)) {
         if (deletedObjects.length > 0) {
           // Get the last deleted group
