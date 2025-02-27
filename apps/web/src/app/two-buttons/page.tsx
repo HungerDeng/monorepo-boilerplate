@@ -1,11 +1,11 @@
 'use client';
 
-import { DndContext, MouseSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, useSensor, useSensors } from '@dnd-kit/core';
 import { Coordinates } from '@dnd-kit/core/dist/types/coordinates';
 import { toPng } from 'html-to-image';
 import { useRef, useState } from 'react';
 import { Textfit } from 'react-textfit';
-import Draggable from 'src/components/draggable';
+import Draggable, { MouseSensor } from 'src/components/draggable';
 
 export default function TwoButtonsPage() {
   const editorWorkspaceRef = useRef<HTMLDivElement>(null);
@@ -165,6 +165,7 @@ export default function TwoButtonsPage() {
                 <div
                   contentEditable
                   suppressContentEditableWarning
+                  data-no-dnd
                   style={{
                     color: fontColor,
                     textDecoration: underline ? 'underline' : 'none',
