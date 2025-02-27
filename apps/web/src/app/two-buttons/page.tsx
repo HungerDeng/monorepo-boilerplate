@@ -241,16 +241,20 @@ export default function TwoButtonsPage() {
         case 'top':
           newHeight = initialHeight - deltaY;
           newY = initialY + deltaY;
+          newWidth = initialWidth;
           break;
         case 'bottom':
           newHeight = initialHeight + deltaY;
+          newWidth = initialWidth;
           break;
         case 'left':
           newWidth = initialWidth - deltaX;
           newX = initialX + deltaX;
+          newHeight = initialHeight;
           break;
         case 'right':
           newWidth = initialWidth + deltaX;
+          newHeight = initialHeight;
           break;
         case 'top-left':
           newWidth = initialWidth - deltaX;
@@ -274,11 +278,8 @@ export default function TwoButtonsPage() {
           break;
       }
 
-      if (newWidth > 0) {
+      if (newWidth > 0 && newHeight > 0) {
         setRectWidth(newWidth);
-        setCoordinates({ x: newX, y: newY });
-      }
-      if (newHeight > 0) {
         setRectHeight(newHeight);
         setCoordinates({ x: newX, y: newY });
       }
