@@ -11,8 +11,12 @@ import Draggable, { MouseSensor } from 'src/components/draggable';
 // DRR stands for "Drag, Rotate, Resize"
 const DRRHandles = ({
   isTextEditorFocused,
+  onRotateHandleMouseDown,
+  isRotating,
 }: {
   isTextEditorFocused: boolean;
+  onRotateHandleMouseDown: (e: React.MouseEvent) => void;
+  isRotating: boolean;
 }) => {
   const borderColor = 'border-gray-800';
   const borderWidth = 'border-[1px]';
@@ -83,9 +87,10 @@ const DRRHandles = ({
       {/* rotate handle */}
       <div
         data-no-dnd
-        className={`handle absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[40%] -translate-x-1/2 rounded-full hover:cursor-ew-resize hover:bg-blue-300 ${
-          isTextEditorFocused ? 'visible' : 'invisible'
-        } `}
+        className={`handle absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[40%] -translate-x-1/2 rounded-full hover:cursor-ew-resize ${
+          isRotating ? 'bg-blue-300' : 'hover:bg-blue-300'
+        } ${isTextEditorFocused ? 'visible' : 'invisible'} `}
+        onMouseDown={onRotateHandleMouseDown}
       >
         <RefreshCcw className='w-full h-full p-[2px] text-gray-800' />
       </div>
@@ -137,6 +142,8 @@ export default function TwoButtonsPage() {
 
   const [text, setText] = useState('Edit Me.');
   const [textFontSize, setTextFontSize] = useState(0);
+  const [isRotating, setIsRotating] = useState(false);
+
   const handleExport = async () => {
     if (!editorWorkspaceRef.current) return;
 
@@ -164,10 +171,42 @@ export default function TwoButtonsPage() {
   const [rectWidth, setRectWidth] = useState(187.3469387755102);
   const [rectHeight, setRectHeight] = useState(90.61224489795919);
   const [{ x, y }, setCoordinates] = useState<Coordinates>(defaultCoordinates);
-  // const [rotation, setRotation] = useState(349);
+  const [rotation, setRotation] = useState(349);
   const mouseSensor = useSensor(MouseSensor);
   const sensors = useSensors(mouseSensor);
   const [isTextEditorFocused, setIsTextEditorFocused] = useState(false);
+
+  const handleRotateMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsRotating(true);
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const centerX = x + rectWidth / 2;
+    const centerY = y + rectHeight / 2;
+    const initialAngle =
+      Math.atan2(startY - centerY, startX - centerX) * (180 / Math.PI);
+    const initialRotation = rotation;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const currentX = moveEvent.clientX;
+      const currentY = moveEvent.clientY;
+      const currentAngle =
+        Math.atan2(currentY - centerY, currentX - centerX) * (180 / Math.PI);
+      const delta = currentAngle - initialAngle;
+      let newRotation = initialRotation + delta;
+      newRotation = ((newRotation % 360) + 360) % 360; // Normalize to 0-360
+      setRotation(newRotation);
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      setIsRotating(false);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
 
   return (
     <div className='flex gap-4 justify-center items-start min-h-screen bg-gray-100'>
@@ -193,7 +232,7 @@ export default function TwoButtonsPage() {
           <Draggable
             left={x}
             top={y}
-            rotation={349}
+            rotation={rotation}
             width={rectWidth}
             height={rectHeight}
             className={`absolute bg-green-200 hover:outline-[1.5px] ${
@@ -326,7 +365,11 @@ export default function TwoButtonsPage() {
               </div>
             </div>
 
-            <DRRHandles isTextEditorFocused={isTextEditorFocused} />
+            <DRRHandles
+              isTextEditorFocused={isTextEditorFocused}
+              onRotateHandleMouseDown={handleRotateMouseDown}
+              isRotating={isRotating}
+            />
           </Draggable>
         </DndContext>
 
