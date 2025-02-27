@@ -7,7 +7,11 @@ import { useRef, useState } from 'react';
 import { Textfit } from 'react-textfit';
 import Draggable, { MouseSensor } from 'src/components/draggable';
 
-const CornerHandles = () => {
+const CornerHandles = ({
+  isTextEditorFocused,
+}: {
+  isTextEditorFocused: boolean;
+}) => {
   const borderColor = 'border-gray-800';
   const borderWidth = 'border-[1px]';
   const bgColor = 'bg-stone-50';
@@ -17,37 +21,69 @@ const CornerHandles = () => {
       {/* scale corner handles */}
       {/* Top-left corner square */}
       <div
-        className={`border-2 absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 opacity-0 group-hover:${hoverOpacity}`}
+        className={`border-2 absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 ${
+          isTextEditorFocused
+            ? 'opacity-100'
+            : `opacity-0 group-hover:${hoverOpacity}`
+        } `}
       />
       {/* Top-right corner square */}
       <div
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 opacity-0 group-hover:${hoverOpacity}`}
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 ${
+          isTextEditorFocused
+            ? 'opacity-100'
+            : `opacity-0 group-hover:${hoverOpacity}`
+        } `}
       />
       {/* Bottom-left corner square */}
       <div
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 opacity-0 group-hover:${hoverOpacity}`}
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 ${
+          isTextEditorFocused
+            ? 'opacity-100'
+            : `opacity-0 group-hover:${hoverOpacity}`
+        } `}
       />
       {/* Bottom-right corner square */}
       <div
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 opacity-0 group-hover:${hoverOpacity}`}
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 ${
+          isTextEditorFocused
+            ? 'opacity-100'
+            : `opacity-0 group-hover:${hoverOpacity}`
+        } `}
       />
 
       {/* resize corner handles */}
       {/* Center-top handle */}
       <div
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 opacity-0 group-hover:${hoverOpacity}`}
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 ${
+          isTextEditorFocused
+            ? 'opacity-100'
+            : `opacity-0 group-hover:${hoverOpacity}`
+        } `}
       />
       {/* Center-bottom handle */}
       <div
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 opacity-0 group-hover:${hoverOpacity}`}
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 ${
+          isTextEditorFocused
+            ? 'opacity-100'
+            : `opacity-0 group-hover:${hoverOpacity}`
+        } `}
       />
       {/* Left-center handle */}
       <div
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:${hoverOpacity}`}
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 ${
+          isTextEditorFocused
+            ? 'opacity-100'
+            : `opacity-0 group-hover:${hoverOpacity}`
+        } `}
       />
       {/* Right-center handle */}
       <div
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:${hoverOpacity}`}
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 ${
+          isTextEditorFocused
+            ? 'opacity-100'
+            : `opacity-0 group-hover:${hoverOpacity}`
+        } `}
       />
     </div>
   );
@@ -110,6 +146,7 @@ export default function TwoButtonsPage() {
   // const [rotation, setRotation] = useState(349);
   const mouseSensor = useSensor(MouseSensor);
   const sensors = useSensors(mouseSensor);
+  const [isTextEditorFocused, setIsTextEditorFocused] = useState(false);
 
   return (
     <div className='flex gap-4 justify-center items-start min-h-screen bg-gray-100'>
@@ -138,9 +175,13 @@ export default function TwoButtonsPage() {
             rotation={349}
             width={rectWidth}
             height={rectHeight}
-            className='absolute bg-green-200 hover:outline-[1.5px] hover:outline-gray-800 hover:outline-dashed group'
+            className={`absolute bg-green-200 hover:outline-[1.5px] ${
+              isTextEditorFocused
+                ? 'outline-gray-800 outline-dashed'
+                : 'hover:outline-gray-800 hover:outline-dashed'
+            } group`}
           >
-            <CornerHandles />
+            <CornerHandles isTextEditorFocused={isTextEditorFocused} />
 
             {/* Textfit is invisible, because we just use it for calculating suitabletextFontSize */}
             <Textfit
@@ -209,6 +250,7 @@ export default function TwoButtonsPage() {
             >
               <div style={{ display: 'block' }}>
                 <div
+                  id='text-editor'
                   contentEditable
                   suppressContentEditableWarning
                   data-no-dnd
@@ -246,6 +288,8 @@ export default function TwoButtonsPage() {
                   onInput={(e) => {
                     setText(e.currentTarget.textContent || '');
                   }}
+                  onFocus={() => setIsTextEditorFocused(true)}
+                  onBlur={() => setIsTextEditorFocused(false)}
                 >
                   Edit Me.
                 </div>
