@@ -3,11 +3,13 @@
 import { DndContext, useSensor, useSensors } from '@dnd-kit/core';
 import { Coordinates } from '@dnd-kit/core/dist/types/coordinates';
 import { toPng } from 'html-to-image';
+import { Move, RefreshCcw } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Textfit } from 'react-textfit';
 import Draggable, { MouseSensor } from 'src/components/draggable';
 
-const CornerHandles = ({
+// DRR stands for "Drag, Rotate, Resize"
+const DRRHandles = ({
   isTextEditorFocused,
 }: {
   isTextEditorFocused: boolean;
@@ -15,7 +17,6 @@ const CornerHandles = ({
   const borderColor = 'border-gray-800';
   const borderWidth = 'border-[1px]';
   const bgColor = 'bg-stone-50';
-  const hoverOpacity = 'opacity-100';
   return (
     <div className='absolute left-0 top-0 w-full h-full cursor-move'>
       {/* scale corner handles */}
@@ -23,36 +24,28 @@ const CornerHandles = ({
       <div
         data-no-dnd
         className={`border-2 absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 cursor-nwse-resize ${
-          isTextEditorFocused
-            ? 'opacity-100'
-            : `opacity-0 group-hover:${hoverOpacity}`
+          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
         } `}
       />
       {/* Top-right corner square */}
       <div
         data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 cursor-nesw-resize ${
-          isTextEditorFocused
-            ? 'opacity-100'
-            : `opacity-0 group-hover:${hoverOpacity}`
+          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
         } `}
       />
       {/* Bottom-left corner square */}
       <div
         data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 cursor-nesw-resize ${
-          isTextEditorFocused
-            ? 'opacity-100'
-            : `opacity-0 group-hover:${hoverOpacity}`
+          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
         } `}
       />
       {/* Bottom-right corner square */}
       <div
         data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 cursor-nwse-resize ${
-          isTextEditorFocused
-            ? 'opacity-100'
-            : `opacity-0 group-hover:${hoverOpacity}`
+          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
         } `}
       />
 
@@ -62,38 +55,57 @@ const CornerHandles = ({
       <div
         data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
-          isTextEditorFocused
-            ? 'opacity-100'
-            : `opacity-0 group-hover:${hoverOpacity}`
+          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
         } `}
       />
       {/* Center-bottom handle */}
       <div
         data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
-          isTextEditorFocused
-            ? 'opacity-100'
-            : `opacity-0 group-hover:${hoverOpacity}`
+          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
         } `}
       />
       {/* Left-center handle */}
       <div
         data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
-          isTextEditorFocused
-            ? 'opacity-100'
-            : `opacity-0 group-hover:${hoverOpacity}`
+          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
         } `}
       />
       {/* Right-center handle */}
       <div
         data-no-dnd
         className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
-          isTextEditorFocused
-            ? 'opacity-100'
-            : `opacity-0 group-hover:${hoverOpacity}`
+          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
         } `}
       />
+
+      {/* rotate handle */}
+      <div
+        data-no-dnd
+        className={`absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[40%] -translate-x-1/2 rounded-full hover:cursor-ew-resize hover:bg-blue-300 ${
+          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        } `}
+      >
+        <RefreshCcw className='w-full h-full p-[2px] text-gray-800' />
+      </div>
+
+      {/* move handle */}
+      {/* left-[60%] and -translate-x-1/2 work together to create different reference points:
+      - left-[60%]: Positions the element's left edge at 60% of the parent's width
+      - -translate-x-1/2: Then shifts the entire element leftward by 50% of its own width
+
+      Visual Result: The element's center point aligns with the parent's 60% position, rather than its left edge. This creates precise control over centering relative to a specific percentage position.
+
+      Without translation: The element's left edge would be at 60%, potentially misaligned from design intent
+      */}
+      <div
+        className={`absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[60%] -translate-x-1/2 rounded-full hover:cursor-move hover:bg-blue-300 ${
+          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        } `}
+      >
+        <Move className='w-full h-full p-[2px] text-gray-800' />
+      </div>
     </div>
   );
 };
@@ -306,7 +318,7 @@ export default function TwoButtonsPage() {
               </div>
             </div>
 
-            <CornerHandles isTextEditorFocused={isTextEditorFocused} />
+            <DRRHandles isTextEditorFocused={isTextEditorFocused} />
           </Draggable>
         </DndContext>
 
