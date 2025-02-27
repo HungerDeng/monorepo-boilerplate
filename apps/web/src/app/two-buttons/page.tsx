@@ -23,29 +23,29 @@ const DRRHandles = ({
       {/* Top-left corner square */}
       <div
         data-no-dnd
-        className={`border-2 absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 cursor-nwse-resize ${
-          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 cursor-nwse-resize ${
+          isTextEditorFocused ? 'visible' : 'invisible'
         } `}
       />
       {/* Top-right corner square */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 cursor-nesw-resize ${
-          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 cursor-nesw-resize ${
+          isTextEditorFocused ? 'visible' : 'invisible'
         } `}
       />
       {/* Bottom-left corner square */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 cursor-nesw-resize ${
-          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 cursor-nesw-resize ${
+          isTextEditorFocused ? 'visible' : 'invisible'
         } `}
       />
       {/* Bottom-right corner square */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 cursor-nwse-resize ${
-          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 cursor-nwse-resize ${
+          isTextEditorFocused ? 'visible' : 'invisible'
         } `}
       />
 
@@ -54,37 +54,37 @@ const DRRHandles = ({
       {/* Center-top handle */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
-          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
+          isTextEditorFocused ? 'visible' : 'invisible'
         } `}
       />
       {/* Center-bottom handle */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
-          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
+          isTextEditorFocused ? 'visible' : 'invisible'
         } `}
       />
       {/* Left-center handle */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
-          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
+          isTextEditorFocused ? 'visible' : 'invisible'
         } `}
       />
       {/* Right-center handle */}
       <div
         data-no-dnd
-        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
-          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
+          isTextEditorFocused ? 'visible' : 'invisible'
         } `}
       />
 
       {/* rotate handle */}
       <div
         data-no-dnd
-        className={`absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[40%] -translate-x-1/2 rounded-full hover:cursor-ew-resize hover:bg-blue-300 ${
-          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        className={`handle absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[40%] -translate-x-1/2 rounded-full hover:cursor-ew-resize hover:bg-blue-300 ${
+          isTextEditorFocused ? 'visible' : 'invisible'
         } `}
       >
         <RefreshCcw className='w-full h-full p-[2px] text-gray-800' />
@@ -100,8 +100,8 @@ const DRRHandles = ({
       Without translation: The element's left edge would be at 60%, potentially misaligned from design intent
       */}
       <div
-        className={`absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[60%] -translate-x-1/2 rounded-full hover:cursor-move hover:bg-blue-300 ${
-          isTextEditorFocused ? 'opacity-100' : 'opacity-0'
+        className={`handle absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[60%] -translate-x-1/2 rounded-full hover:cursor-move hover:bg-blue-300 ${
+          isTextEditorFocused ? 'visible' : 'invisible'
         } `}
       >
         <Move className='w-full h-full p-[2px] text-gray-800' />
@@ -200,7 +200,7 @@ export default function TwoButtonsPage() {
               isTextEditorFocused
                 ? 'outline-gray-800 outline-dashed'
                 : 'hover:outline-gray-800 hover:outline-dashed'
-            } group`}
+            }`}
           >
             {/* Textfit is invisible, because we just use it for calculating suitabletextFontSize */}
             <Textfit
@@ -311,7 +311,15 @@ export default function TwoButtonsPage() {
                     setText(e.currentTarget.textContent || '');
                   }}
                   onFocus={() => setIsTextEditorFocused(true)}
-                  onBlur={() => setIsTextEditorFocused(false)}
+                  onBlur={(e) => {
+                    // Only blur if the new focused element isn't a handle
+                    const relatedTarget = e.relatedTarget as HTMLElement;
+                    if (!relatedTarget?.querySelector('.handle')) {
+                      setIsTextEditorFocused(false);
+                    } else {
+                      e.currentTarget.focus();
+                    }
+                  }}
                 >
                   Edit Me.
                 </div>
