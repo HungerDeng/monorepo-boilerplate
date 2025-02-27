@@ -238,6 +238,7 @@ export default function TwoButtonsPage() {
       let newY = initialY;
 
       switch (handleType) {
+        // TODO(not high priority): If we want to fix the position of one edge of the draggable element when using the opposite resize corner handle, we also need to modify the rotation angle of the element, but it makes the code more complex. Given that the current interaction effect is totally acceptable, so it's not a high priority task now.
         case 'top':
           newHeight = initialHeight - deltaY;
           newY = initialY + deltaY;
