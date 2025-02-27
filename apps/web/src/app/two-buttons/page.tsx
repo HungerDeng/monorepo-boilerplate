@@ -32,6 +32,7 @@ const DRRHandles = ({
         className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 cursor-nwse-resize ${
           isTextEditorFocused ? 'visible' : 'invisible'
         } `}
+        onMouseDown={(e) => onResizeHandleMouseDown('top-left', e)}
       />
       {/* Top-right corner square */}
       <div
@@ -39,6 +40,7 @@ const DRRHandles = ({
         className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 cursor-nesw-resize ${
           isTextEditorFocused ? 'visible' : 'invisible'
         } `}
+        onMouseDown={(e) => onResizeHandleMouseDown('top-right', e)}
       />
       {/* Bottom-left corner square */}
       <div
@@ -46,6 +48,7 @@ const DRRHandles = ({
         className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 cursor-nesw-resize ${
           isTextEditorFocused ? 'visible' : 'invisible'
         } `}
+        onMouseDown={(e) => onResizeHandleMouseDown('bottom-left', e)}
       />
       {/* Bottom-right corner square */}
       <div
@@ -53,10 +56,10 @@ const DRRHandles = ({
         className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 cursor-nwse-resize ${
           isTextEditorFocused ? 'visible' : 'invisible'
         } `}
+        onMouseDown={(e) => onResizeHandleMouseDown('bottom-right', e)}
       />
 
       {/* resize corner handles */}
-      {/* todo: add resize handles */}
       {/* Center-top handle */}
       <div
         data-no-dnd
@@ -248,6 +251,26 @@ export default function TwoButtonsPage() {
           break;
         case 'right':
           newWidth = initialWidth + deltaX;
+          break;
+        case 'top-left':
+          newWidth = initialWidth - deltaX;
+          newHeight = initialHeight - deltaY;
+          newX = initialX + deltaX;
+          newY = initialY + deltaY;
+          break;
+        case 'top-right':
+          newWidth = initialWidth + deltaX;
+          newHeight = initialHeight - deltaY;
+          newY = initialY + deltaY;
+          break;
+        case 'bottom-left':
+          newWidth = initialWidth - deltaX;
+          newHeight = initialHeight + deltaY;
+          newX = initialX + deltaX;
+          break;
+        case 'bottom-right':
+          newWidth = initialWidth + deltaX;
+          newHeight = initialHeight + deltaY;
           break;
       }
 
