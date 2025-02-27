@@ -185,6 +185,33 @@ export default function TwoButtonsPage() {
   const sensors = useSensors(mouseSensor);
   const [isTextEditorFocused, setIsTextEditorFocused] = useState(false);
 
+  const checkVisibleAreaValid = (
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    threshold = 0.5,
+  ) => {
+    const workspace = document.getElementById('editor-workspace');
+    if (!workspace) return true;
+
+    const { width: workspaceWidth, height: workspaceHeight } =
+      workspace.getBoundingClientRect();
+    const draggableArea = width * height;
+
+    const visibleWidth = Math.max(
+      0,
+      Math.min(x + width, workspaceWidth) - Math.max(x, 0),
+    );
+    const visibleHeight = Math.max(
+      0,
+      Math.min(y + height, workspaceHeight) - Math.max(y, 0),
+    );
+    const visibleArea = visibleWidth * visibleHeight;
+
+    return visibleArea / draggableArea >= threshold;
+  };
+
   const handleRotateMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsRotating(true);
@@ -204,6 +231,7 @@ export default function TwoButtonsPage() {
       const delta = currentAngle - initialAngle;
       let newRotation = initialRotation + delta;
       newRotation = ((newRotation % 360) + 360) % 360; // Normalize to 0-360
+      // seems that the rotation will always pass the checkVisibleAreaValid function, so we don't need to check it again.
       setRotation(newRotation);
     };
 
@@ -280,9 +308,17 @@ export default function TwoButtonsPage() {
       }
 
       if (newWidth > 0 && newHeight > 0) {
-        setRectWidth(newWidth);
-        setRectHeight(newHeight);
-        setCoordinates({ x: newX, y: newY });
+        if (!checkVisibleAreaValid(newX, newY, newWidth, newHeight)) {
+          // TODO(today): expose a callback to toast error message
+          console.error(
+            `It is not allowed to extend the text area outside the template area by more than 50%. BTW, only the area within the meme template area will be rendered when you download.`,
+          );
+          return;
+        } else {
+          setRectWidth(newWidth);
+          setRectHeight(newHeight);
+          setCoordinates({ x: newX, y: newY });
+        }
       }
     };
 
@@ -315,28 +351,10 @@ export default function TwoButtonsPage() {
             const workspace = document.getElementById('editor-workspace');
 
             if (workspace) {
-              const { width: workspaceWidth, height: workspaceHeight } =
-                workspace.getBoundingClientRect();
-              const draggableArea = rectWidth * rectHeight;
-
-              // Calculate visible area within workspace
-              const visibleWidth = Math.max(
-                0,
-                Math.min(newX + rectWidth, workspaceWidth) - Math.max(newX, 0),
-              );
-              const visibleHeight = Math.max(
-                0,
-                Math.min(newY + rectHeight, workspaceHeight) -
-                  Math.max(newY, 0),
-              );
-              const visibleArea = visibleWidth * visibleHeight;
-
-              // Show error if less than {threshold * 100 }% of area is visible
-              const threshold = 0.5;
-              if (visibleArea / draggableArea < threshold) {
+              if (!checkVisibleAreaValid(newX, newY, rectWidth, rectHeight)) {
                 // TODO(today): expose a callback to toast error message
                 console.error(
-                  `It is not allowed to move the text area outside the template area by more than ${threshold * 100}%. BTW, only the area within the meme template area will be rendered when you download.`,
+                  `It is not allowed to move the text area outside the template area by more than 50%. BTW, only the area within the meme template area will be rendered when you download.`,
                 );
                 // directly return without updating the coordinates, so the text area will return to the last valid position
                 return;
