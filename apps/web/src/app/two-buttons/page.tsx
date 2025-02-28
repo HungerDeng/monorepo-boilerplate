@@ -18,7 +18,11 @@ import TextArea, {
 } from 'src/components/text-area';
 
 export default function TwoButtonsPage() {
-  const editorWorkspaceRef = useRef<HTMLDivElement>(null);
+  const topSpacingAreaId = 'top-spacing-rect';
+  const templateAreaId = 'template-rect';
+  const bottomSpacingAreaId = 'bottom-spacing-rect';
+  const exportAreaId = 'export-rect';
+  const editorAreaRef = useRef<HTMLDivElement>(null);
 
   // Add new state variables
   const [showTextOutsideConfig, setShowTextOutsideConfig] = useState(false);
@@ -54,13 +58,13 @@ export default function TwoButtonsPage() {
   };
 
   const handleExport = async () => {
-    if (!editorWorkspaceRef.current) return;
+    if (!editorAreaRef.current) return;
 
     try {
       const filter = (node: HTMLElement) => {
         return !node.id?.includes(textFitPlaceholderId);
       };
-      const dataUrl = await toPng(editorWorkspaceRef.current, {
+      const dataUrl = await toPng(editorAreaRef.current, {
         cacheBust: true,
         filter: filter,
       });
@@ -181,77 +185,85 @@ export default function TwoButtonsPage() {
 
       <div
         id='workspace-container'
-        className='flex flex-col w-fit'
+        className='flex flex-col gap-3 w-fit'
         style={{
           boxShadow: '0 0 60px 10px rgba(0, 0, 0, 0.1)',
         }}
       >
         <div
-          id='top-spacing-rect'
-          className={`w-full bg-green-200`}
-          style={{ height: `${topSpacingHeight}px` }}
-        />
-
-        <div
-          id='editor-workspace'
-          className='relative'
-          ref={editorWorkspaceRef}
+          id='toolbar-container'
+          className='w-full h-fit flex justify-center items-center border-b-[1px] border-gray-400 bg-blue-200'
         >
-          <img
-            src='/Two-Buttons-meme-1g8my4.jpg'
-            alt='Two Buttons Meme'
-            width={600}
-            height={908}
-          />
-
-          {/* First button rectangle */}
-          <TextArea
-            initialPosition={{
-              coordinates: {
-                x: 55.10204081632653,
-                y: 84.48979591836735,
-              },
-              rotation: 349,
-              width: 187.3469387755102,
-              height: 90.61224489795919,
-            }}
-            textConfig={defaultTextConfig}
-          />
-
-          {/* Second button rectangle */}
-          <TextArea
-            initialPosition={{
-              coordinates: {
-                x: 273.0612244897959,
-                y: 55.10204081632653,
-              },
-              rotation: 352,
-              width: 143.26530612244898,
-              height: 80.81632653061224,
-            }}
-            textConfig={defaultTextConfig}
-          />
-
-          {/* Bottom text rectangle */}
-          <TextArea
-            initialPosition={{
-              coordinates: {
-                x: 19.591836734693878,
-                y: 753.1530612244899,
-              },
-              rotation: 0,
-              width: 559.5918367346939,
-              height: 121.6938775510204,
-            }}
-            textConfig={defaultTextConfig}
-          />
+          <div id='toolbar'> Text Text</div>
         </div>
 
-        <div
-          id='bottom-spacing-rect'
-          className={`w-full bg-green-200`}
-          style={{ height: `${bottomSpacingHeight}px` }}
-        />
+        <div id={exportAreaId} ref={editorAreaRef} className='w-fit'>
+          <div
+            id={topSpacingAreaId}
+            className={`w-full bg-green-200`}
+            style={{ height: `${topSpacingHeight}px` }}
+          />
+
+          <div id={templateAreaId} className='relative w-fit'>
+            <img
+              src='/Two-Buttons-meme-1g8my4.jpg'
+              alt='Two Buttons Meme'
+              width={600}
+              height={908}
+            />
+
+            {/* First button rectangle */}
+            <TextArea
+              initialPosition={{
+                coordinates: {
+                  x: 55.10204081632653,
+                  y: 84.48979591836735,
+                },
+                rotation: 349,
+                width: 187.3469387755102,
+                height: 90.61224489795919,
+              }}
+              validAreaId={templateAreaId}
+              textConfig={defaultTextConfig}
+            />
+
+            {/* Second button rectangle */}
+            <TextArea
+              initialPosition={{
+                coordinates: {
+                  x: 273.0612244897959,
+                  y: 55.10204081632653,
+                },
+                rotation: 352,
+                width: 143.26530612244898,
+                height: 80.81632653061224,
+              }}
+              validAreaId={templateAreaId}
+              textConfig={defaultTextConfig}
+            />
+
+            {/* Bottom text rectangle */}
+            <TextArea
+              initialPosition={{
+                coordinates: {
+                  x: 19.591836734693878,
+                  y: 753.1530612244899,
+                },
+                rotation: 0,
+                width: 559.5918367346939,
+                height: 121.6938775510204,
+              }}
+              validAreaId={templateAreaId}
+              textConfig={defaultTextConfig}
+            />
+          </div>
+
+          <div
+            id={bottomSpacingAreaId}
+            className={`w-full bg-green-200`}
+            style={{ height: `${bottomSpacingHeight}px` }}
+          />
+        </div>
       </div>
     </div>
   );

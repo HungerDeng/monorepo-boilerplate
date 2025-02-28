@@ -14,6 +14,7 @@ interface PositionProps {
 
 interface DRRContainerProps {
   initialPosition: PositionProps;
+  validAreaId: string;
   isHandlesVisible: boolean;
   children: React.ReactNode;
   sizeChangeCallback?: (newWidth: number, newHeight: number) => void;
@@ -137,6 +138,7 @@ const DRRHandles = ({
 
 function DRRContainer({
   initialPosition,
+  validAreaId,
   isHandlesVisible,
   children,
   sizeChangeCallback,
@@ -159,7 +161,7 @@ function DRRContainer({
     threshold = 0.5,
   ) => {
     // TODO: add parameter workspace
-    const workspace = document.getElementById('editor-workspace');
+    const workspace = document.getElementById(validAreaId);
     if (!workspace) return true;
 
     const { width: workspaceWidth, height: workspaceHeight } =
@@ -305,7 +307,7 @@ function DRRContainer({
       onDragEnd={({ delta }) => {
         const newX = x + delta.x;
         const newY = y + delta.y;
-        const workspace = document.getElementById('editor-workspace');
+        const workspace = document.getElementById(validAreaId);
 
         if (workspace) {
           if (!checkVisibleAreaValid(newX, newY, rectWidth, rectHeight)) {

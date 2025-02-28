@@ -64,9 +64,10 @@ interface PositionProps {
 interface TextAreaProps {
   initialPosition: PositionProps;
   textConfig: TextConfig;
+  validAreaId: string;
 }
 
-function TextArea({ initialPosition, textConfig }: TextAreaProps) {
+function TextArea({ initialPosition, textConfig, validAreaId }: TextAreaProps) {
   const [text, setText] = useState(textConfig.initialText);
   const [textFontSize, setTextFontSize] = useState(0);
   const [isTextEditorFocused, setIsTextEditorFocused] = useState(false);
@@ -76,6 +77,7 @@ function TextArea({ initialPosition, textConfig }: TextAreaProps) {
   return (
     <DRRContainer
       initialPosition={initialPosition}
+      validAreaId={validAreaId}
       isHandlesVisible={isTextEditorFocused}
       sizeChangeCallback={(newWidth, newHeight) => {
         setTextAreaWidth(newWidth);
