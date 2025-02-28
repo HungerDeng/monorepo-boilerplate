@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import Draggable, { MouseSensor } from './draggable';
 
-interface PositionProps {
+export interface PositionProps {
   coordinates: Coordinates;
   rotation: number;
   width: number;

@@ -1,8 +1,7 @@
-import { Coordinates } from '@dnd-kit/core/dist/types';
 import { useState } from 'react';
 import { Textfit } from 'react-textfit';
 
-import DRRContainer from './drr-container';
+import DRRContainer, { PositionProps } from './drr-container';
 
 const textFitPlaceholderId = 'te-ph';
 
@@ -10,6 +9,8 @@ const defaultTextConfig: TextConfig = {
   initialText: 'Edit Me.',
   fontColor: '#000000',
   underline: false,
+  linethrough: false,
+  uppercase: false,
   fontFamily: 'Arial',
   fontWeight: 'normal',
   fontStyle: 'normal',
@@ -30,10 +31,12 @@ const defaultTextConfig: TextConfig = {
   backgroundColor: 'transparent',
 };
 
-interface TextConfig {
+export interface TextConfig {
   initialText: string;
   fontColor: string;
   underline: boolean;
+  linethrough: boolean;
+  uppercase: boolean;
   fontFamily: string;
   fontWeight: string;
   fontStyle: string;
@@ -52,13 +55,6 @@ interface TextConfig {
   textShadowBlur: number;
   textShadowColor: string;
   backgroundColor: string;
-}
-
-interface PositionProps {
-  coordinates: Coordinates;
-  rotation: number;
-  width: number;
-  height: number;
 }
 
 interface TextAreaProps {
@@ -137,7 +133,12 @@ function TextArea({
           <div
             style={{
               color: textConfig.fontColor,
-              textDecoration: textConfig.underline ? 'underline' : 'none',
+              textDecoration: textConfig.underline
+                ? 'underline'
+                : textConfig.linethrough
+                  ? 'line-through'
+                  : 'none',
+              textTransform: textConfig.uppercase ? 'uppercase' : 'none',
               fontFamily: textConfig.fontFamily,
               textAlign: textConfig.horizontalTextAlign as
                 | 'left'
@@ -178,7 +179,12 @@ function TextArea({
               className='relative z-10 cursor-text'
               style={{
                 color: textConfig.fontColor,
-                textDecoration: textConfig.underline ? 'underline' : 'none',
+                textDecoration: textConfig.underline
+                  ? 'underline'
+                  : textConfig.linethrough
+                    ? 'line-through'
+                    : 'none',
+                textTransform: textConfig.uppercase ? 'uppercase' : 'none',
                 fontFamily: textConfig.fontFamily,
                 fontSize: textFontSize,
                 textAlign: textConfig.horizontalTextAlign as

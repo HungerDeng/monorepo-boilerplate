@@ -16,6 +16,7 @@ import TextArea, {
   defaultTextConfig,
   textFitPlaceholderId,
 } from 'src/components/text-area';
+import { TextToolbar } from 'src/components/text-toolbar';
 
 import { Toaster } from '~*/components/ui/toaster';
 import { useToast } from '~*/hooks/use-toast';
@@ -211,7 +212,19 @@ export default function TwoButtonsPage() {
           id='toolbar-container'
           className='w-full h-fit flex justify-center items-center border-b-[1px] border-gray-400 bg-blue-200'
         >
-          <div id='toolbar'> Text Text</div>
+          <TextToolbar
+            textConfig={defaultTextConfig}
+            copyMode={false}
+            deleteTextCallback={() => {
+              console.log('delete text');
+            }}
+            updateTextConfig={() => {
+              console.log('update text config');
+            }}
+            copyAllTextStyleCallback={() => {
+              console.log('copy all text style');
+            }}
+          />
         </div>
 
         <div id={exportAreaId} ref={editorAreaRef} className='w-fit'>
