@@ -17,6 +17,9 @@ import TextArea, {
   textFitPlaceholderId,
 } from 'src/components/text-area';
 
+import { Toaster } from '~*/components/ui/toaster';
+import { useToast } from '~*/hooks/use-toast';
+
 export default function TwoButtonsPage() {
   const topSpacingAreaId = 'top-spacing-rect';
   const templateAreaId = 'template-rect';
@@ -28,6 +31,20 @@ export default function TwoButtonsPage() {
   const [showTextOutsideConfig, setShowTextOutsideConfig] = useState(false);
   const [topSpacingHeight, setTopSpacingHeight] = useState(0);
   const [bottomSpacingHeight, setBottomSpacingHeight] = useState(0);
+
+  const { toast } = useToast();
+  const textAreaToastCallback = ({
+    title,
+    message,
+  }: {
+    title: string;
+    message: string;
+  }) => {
+    toast({
+      title: title,
+      description: message,
+    });
+  };
 
   const handleSelectTemplate = () => {
     console.log('select template');
@@ -78,7 +95,7 @@ export default function TwoButtonsPage() {
   };
 
   return (
-    <div className='flex min-h-screen gap-4'>
+    <main className='flex min-h-screen gap-4'>
       {/* Simplified Sidebar Controls */}
       <div
         id='sidebar-container'
@@ -225,6 +242,7 @@ export default function TwoButtonsPage() {
               }}
               validAreaId={templateAreaId}
               textConfig={defaultTextConfig}
+              toastCallback={textAreaToastCallback}
             />
 
             {/* Second button rectangle */}
@@ -240,6 +258,7 @@ export default function TwoButtonsPage() {
               }}
               validAreaId={templateAreaId}
               textConfig={defaultTextConfig}
+              toastCallback={textAreaToastCallback}
             />
 
             {/* Bottom text rectangle */}
@@ -255,6 +274,7 @@ export default function TwoButtonsPage() {
               }}
               validAreaId={templateAreaId}
               textConfig={defaultTextConfig}
+              toastCallback={textAreaToastCallback}
             />
           </div>
 
@@ -265,6 +285,7 @@ export default function TwoButtonsPage() {
           />
         </div>
       </div>
-    </div>
+      <Toaster />
+    </main>
   );
 }

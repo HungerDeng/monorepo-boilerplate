@@ -18,6 +18,13 @@ interface DRRContainerProps {
   isHandlesVisible: boolean;
   children: React.ReactNode;
   sizeChangeCallback?: (newWidth: number, newHeight: number) => void;
+  toastCallback?: ({
+    title,
+    message,
+  }: {
+    title: string;
+    message: string;
+  }) => void;
 }
 
 // DRR stands for "Drag, Rotate, Resize"
@@ -142,6 +149,7 @@ function DRRContainer({
   isHandlesVisible,
   children,
   sizeChangeCallback,
+  toastCallback,
 }: DRRContainerProps) {
   const [rectWidth, setRectWidth] = useState(initialPosition.width);
   const [rectHeight, setRectHeight] = useState(initialPosition.height);
@@ -160,7 +168,6 @@ function DRRContainer({
     height: number,
     threshold = 0.5,
   ) => {
-    // TODO: add parameter workspace
     const workspace = document.getElementById(validAreaId);
     if (!workspace) return true;
 
@@ -278,10 +285,11 @@ function DRRContainer({
 
       if (newWidth > 0 && newHeight > 0) {
         if (!checkVisibleAreaValid(newX, newY, newWidth, newHeight)) {
-          // TODO(today): expose a callback to toast error message
-          console.error(
-            `It is not allowed to extend the text area outside the template area by more than 50%. BTW, only the area within the meme template area will be rendered when you download.`,
-          );
+          toastCallback?.({
+            title: 'For your information',
+            message:
+              'It is not allowed to extend the text area outside its container area by more than 50%. BTW, only the area within the template+spacing area will be rendered when you download.',
+          });
           return;
         } else {
           setRectWidth(newWidth);
@@ -311,10 +319,11 @@ function DRRContainer({
 
         if (workspace) {
           if (!checkVisibleAreaValid(newX, newY, rectWidth, rectHeight)) {
-            // TODO(today): expose a callback to toast error message
-            console.error(
-              `It is not allowed to move the text area outside the template area by more than 50%. BTW, only the area within the meme template area will be rendered when you download.`,
-            );
+            toastCallback?.({
+              title: 'For your information',
+              message:
+                'It is not allowed to move the text area outside its container area by more than 50%. BTW, only the area within the template+spacing area will be rendered when you download.',
+            });
             // directly return without updating the coordinates, so the text area will return to the last valid position
             return;
           }

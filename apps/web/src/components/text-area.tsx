@@ -65,9 +65,21 @@ interface TextAreaProps {
   initialPosition: PositionProps;
   textConfig: TextConfig;
   validAreaId: string;
+  toastCallback?: ({
+    title,
+    message,
+  }: {
+    title: string;
+    message: string;
+  }) => void;
 }
 
-function TextArea({ initialPosition, textConfig, validAreaId }: TextAreaProps) {
+function TextArea({
+  initialPosition,
+  textConfig,
+  validAreaId,
+  toastCallback,
+}: TextAreaProps) {
   const [text, setText] = useState(textConfig.initialText);
   const [textFontSize, setTextFontSize] = useState(0);
   const [isTextEditorFocused, setIsTextEditorFocused] = useState(false);
@@ -83,6 +95,7 @@ function TextArea({ initialPosition, textConfig, validAreaId }: TextAreaProps) {
         setTextAreaWidth(newWidth);
         setTextAreaHeight(newHeight);
       }}
+      toastCallback={toastCallback}
     >
       <div className='w-full h-full'>
         {/* Textfit is invisible, because we just use it for calculating suitabletextFontSize */}
