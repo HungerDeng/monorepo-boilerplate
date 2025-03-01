@@ -243,7 +243,10 @@ function TextArea({
                   onDeselectedCallback?.(uniqueId);
                 } else {
                   // TODO(not high priority): interacting with the drag handle when the text editor is focused will cause the focus to be lost. But the 'isTextEditorFocused' state is still true, preventing the DRRHandles from becoming invisible. So looks like it's not a big issue now.
-                  e.currentTarget.focus();
+                  // The original reason I added the below line of code is to make the editing text remain focused when user drag the text area.
+                  // However, it makes the corresponding textToolbar can't display its popover content when user interacts with the textToolbar, because the focus of popover content always transfers to the editing text.
+                  // So I have to make a trade-off, commenting out the below line of code, since the textToolbar user experience is more important than the text focus.
+                  // e.currentTarget.focus();
                 }
               }}
             >

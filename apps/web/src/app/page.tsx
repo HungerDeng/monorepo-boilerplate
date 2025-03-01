@@ -268,26 +268,27 @@ export default function TwoButtonsPage() {
           id='toolbar-container'
           className='text-toolbar w-full h-[55px] flex justify-center items-center border-b-[1px] border-gray-400 bg-blue-200'
         >
-          <TextToolbar
-            className={`${isTextToolbarVisible ? 'visible' : 'invisible'}`}
-            textConfig={textConfigs[selectedTextAreaId]}
-            copyMode={false}
-            deleteTextCallback={() => {
-              console.log('delete text');
-            }}
-            updateTextConfig={(updates) => {
-              setTextConfigs({
-                ...textConfigs,
-                [selectedTextAreaId]: {
-                  ...textConfigs[selectedTextAreaId],
-                  ...updates,
-                },
-              });
-            }}
-            copyAllTextStyleCallback={() => {
-              console.log('copy all text style');
-            }}
-          />
+          {isTextToolbarVisible && (
+            <TextToolbar
+              textConfig={textConfigs[selectedTextAreaId]}
+              copyMode={false}
+              deleteTextCallback={() => {
+                console.log('delete text');
+              }}
+              updateTextConfig={(updates) => {
+                setTextConfigs({
+                  ...textConfigs,
+                  [selectedTextAreaId]: {
+                    ...textConfigs[selectedTextAreaId],
+                    ...updates,
+                  },
+                });
+              }}
+              copyAllTextStyleCallback={() => {
+                console.log('copy all text style');
+              }}
+            />
+          )}
         </div>
 
         {templateData && (
