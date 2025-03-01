@@ -136,7 +136,8 @@ const fonts = [
 ];
 
 interface TextToolbarProps {
-  textConfig: TextConfig;
+  className?: string;
+  textConfig?: TextConfig;
   copyMode: boolean;
   deleteTextCallback: () => void;
   updateTextConfig: (updates: Record<string, any>) => void;
@@ -147,6 +148,7 @@ interface TextToolbarProps {
 }
 
 export function TextToolbar({
+  className,
   textConfig,
   copyMode,
   deleteTextCallback,
@@ -154,9 +156,11 @@ export function TextToolbar({
   copyAllTextStyleCallback,
 }: TextToolbarProps) {
   const [fontFamilyOpen, setFontFamilyOpen] = useState(false);
-  return (
+  return textConfig ? (
     <TooltipProvider>
-      <div className='bg-white shadow-lg rounded-lg p-2 flex items-center gap-1 border border-gray-200'>
+      <div
+        className={`bg-white shadow-lg rounded-lg p-2 flex items-center gap-1 border border-gray-200 ${className}`}
+      >
         {/* Font Family Selector */}
         <Popover open={fontFamilyOpen} onOpenChange={setFontFamilyOpen}>
           <Tooltip>
@@ -180,7 +184,7 @@ export function TextToolbar({
             </TooltipContent>
           </Tooltip>
 
-          <PopoverContent className='w-auto p-1'>
+          <PopoverContent className='text-toolbar-popover w-auto p-1'>
             <Command>
               <CommandInput placeholder='Search font...' />
               <CommandList>
@@ -374,7 +378,7 @@ export function TextToolbar({
               <p>Color</p>
             </TooltipContent>
           </Tooltip>
-          <PopoverContent className='w-auto p-1'>
+          <PopoverContent className='text-toolbar-popover w-auto p-1'>
             <Tabs defaultValue='text'>
               <TabsList className='h-fit gap-1'>
                 <TabsTrigger value='text'>
@@ -518,7 +522,7 @@ export function TextToolbar({
               <p>Alignment</p>
             </TooltipContent>
           </Tooltip>
-          <PopoverContent className='w-auto p-1'>
+          <PopoverContent className='text-toolbar-popover w-auto p-1'>
             <div className='flex flex-col gap-1'>
               <button
                 onClick={() =>
@@ -575,7 +579,7 @@ export function TextToolbar({
                 <p>Spacing</p>
               </TooltipContent>
             </Tooltip>
-            <PopoverContent className='w-64 p-4'>
+            <PopoverContent className='text-toolbar-popover w-64 p-4'>
               <div className='space-y-4'>
                 <label className='block text-sm font-medium'>
                   Letter Spacing
@@ -639,7 +643,7 @@ export function TextToolbar({
               <p>Opacity</p>
             </TooltipContent>
           </Tooltip>
-          <PopoverContent className='w-64 p-4'>
+          <PopoverContent className='text-toolbar-popover w-64 p-4'>
             <div className='space-y-4'>
               <label className='block text-sm font-medium'>
                 Opacity
@@ -719,5 +723,5 @@ export function TextToolbar({
         </Tooltip>
       </div>
     </TooltipProvider>
-  );
+  ) : null;
 }

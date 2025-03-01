@@ -58,9 +58,12 @@ export interface TextConfig {
 }
 
 interface TextAreaProps {
+  uniqueId: string; // the unique id of the text area. currently, we just manually obey the uniqueId rule, even though having automatical check logic is more robust.
+  validAreaId: string; // the id of the area that the text area belongs to, when the text area move/resize outsize the valid area, maybe trigger the error/warning toast
   initialPosition: PositionProps;
   textConfig: TextConfig;
-  validAreaId: string;
+  onSelectedCallback?: (uniqueId: string) => void;
+  onDeselectedCallback?: (uniqueId: string) => void;
   toastCallback?: ({
     title,
     message,
@@ -71,14 +74,17 @@ interface TextAreaProps {
 }
 
 function TextArea({
+  uniqueId,
   initialPosition,
   textConfig,
   validAreaId,
+  onSelectedCallback,
+  onDeselectedCallback,
   toastCallback,
 }: TextAreaProps) {
   const [text, setText] = useState(textConfig.initialText);
   const [textFontSize, setTextFontSize] = useState(0);
-  const [isTextEditorFocused, setIsTextEditorFocused] = useState(false);
+  const [isTextAreaSelected, setIsTextAreaSelected] = useState(false);
   const [textAreaWidth, setTextAreaWidth] = useState(initialPosition.width);
   const [textAreaHeight, setTextAreaHeight] = useState(initialPosition.height);
 
@@ -86,7 +92,7 @@ function TextArea({
     <DRRContainer
       initialPosition={initialPosition}
       validAreaId={validAreaId}
-      isHandlesVisible={isTextEditorFocused}
+      isHandlesVisible={isTextAreaSelected}
       sizeChangeCallback={(newWidth, newHeight) => {
         setTextAreaWidth(newWidth);
         setTextAreaHeight(newHeight);
@@ -218,12 +224,23 @@ function TextArea({
               onInput={(e) => {
                 setText(e.currentTarget.textContent || '');
               }}
-              onFocus={() => setIsTextEditorFocused(true)}
+              onFocus={() => {
+                setIsTextAreaSelected(true);
+                onSelectedCallback?.(uniqueId);
+              }}
               onBlur={(e) => {
-                // Only blur if the new focused element isn't a handle
                 const relatedTarget = e.relatedTarget as HTMLElement;
-                if (!relatedTarget?.querySelector('.handle')) {
-                  setIsTextEditorFocused(false);
+                // Check if blur is caused by TextToolbar interaction
+                const isToolbarInteraction = relatedTarget?.closest(
+                  '.text-toolbar, .text-toolbar-popover',
+                );
+
+                if (
+                  !relatedTarget?.querySelector('.handle') &&
+                  !isToolbarInteraction
+                ) {
+                  setIsTextAreaSelected(false);
+                  onDeselectedCallback?.(uniqueId);
                 } else {
                   // TODO(not high priority): interacting with the drag handle when the text editor is focused will cause the focus to be lost. But the 'isTextEditorFocused' state is still true, preventing the DRRHandles from becoming invisible. So looks like it's not a big issue now.
                   e.currentTarget.focus();
