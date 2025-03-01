@@ -145,6 +145,7 @@ interface TextToolbarProps {
     updates: TextConfig | null,
     latestCopyMode: boolean,
   ) => void;
+  onBlur?: (e: React.FocusEvent<HTMLDivElement>) => void;
 }
 
 export function TextToolbar({
@@ -154,12 +155,26 @@ export function TextToolbar({
   deleteTextCallback,
   updateTextConfig,
   copyAllTextStyleCallback,
+  onBlur,
 }: TextToolbarProps) {
   const [fontFamilyOpen, setFontFamilyOpen] = useState(false);
   return textConfig ? (
     <TooltipProvider>
       <div
         className={`bg-white shadow-lg rounded-lg p-2 flex items-center gap-1 border border-gray-200 ${className}`}
+        onBlur={(e) => {
+          const relatedTarget = e.relatedTarget as HTMLElement;
+          const isToolbarInteraction = relatedTarget?.closest(
+            '.text-toolbar, .text-toolbar-popover',
+          );
+          // Prevent onBlur from firing when clicking on direct children or popover content
+          if (isToolbarInteraction) {
+            e.preventDefault();
+            return;
+          }
+          // Only call the onBlur prop if we're truly blurring outside the component
+          onBlur?.(e);
+        }}
       >
         {/* Font Family Selector */}
         <Popover open={fontFamilyOpen} onOpenChange={setFontFamilyOpen}>

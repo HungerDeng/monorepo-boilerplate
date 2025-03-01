@@ -25,6 +25,8 @@ interface DRRContainerProps {
     title: string;
     message: string;
   }) => void;
+  onFocus?: (e: React.FocusEvent<HTMLDivElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLDivElement>) => void;
 }
 
 // DRR stands for "Drag, Rotate, Resize"
@@ -48,7 +50,7 @@ const DRRHandles = ({
       {/* Top-left corner square */}
       <div
         data-no-dnd
-        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 cursor-nwse-resize ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -left-1.5 cursor-nwse-resize ${
           isVisible ? 'visible' : 'invisible'
         } `}
         onMouseDown={(e) => onResizeHandleMouseDown('top-left', e)}
@@ -56,7 +58,7 @@ const DRRHandles = ({
       {/* Top-right corner square */}
       <div
         data-no-dnd
-        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 cursor-nesw-resize ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 -right-1.5 cursor-nesw-resize ${
           isVisible ? 'visible' : 'invisible'
         } `}
         onMouseDown={(e) => onResizeHandleMouseDown('top-right', e)}
@@ -64,7 +66,7 @@ const DRRHandles = ({
       {/* Bottom-left corner square */}
       <div
         data-no-dnd
-        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 cursor-nesw-resize ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -left-1.5 cursor-nesw-resize ${
           isVisible ? 'visible' : 'invisible'
         } `}
         onMouseDown={(e) => onResizeHandleMouseDown('bottom-left', e)}
@@ -72,7 +74,7 @@ const DRRHandles = ({
       {/* Bottom-right corner square */}
       <div
         data-no-dnd
-        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 cursor-nwse-resize ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 -right-1.5 cursor-nwse-resize ${
           isVisible ? 'visible' : 'invisible'
         } `}
         onMouseDown={(e) => onResizeHandleMouseDown('bottom-right', e)}
@@ -82,7 +84,7 @@ const DRRHandles = ({
       {/* Center-top handle */}
       <div
         data-no-dnd
-        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -top-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
           isVisible ? 'visible' : 'invisible'
         } `}
         onMouseDown={(e) => onResizeHandleMouseDown('top', e)}
@@ -90,7 +92,7 @@ const DRRHandles = ({
       {/* Center-bottom handle */}
       <div
         data-no-dnd
-        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -bottom-1.5 left-1/2 -translate-x-1/2 hover:cursor-row-resize ${
           isVisible ? 'visible' : 'invisible'
         } `}
         onMouseDown={(e) => onResizeHandleMouseDown('bottom', e)}
@@ -98,7 +100,7 @@ const DRRHandles = ({
       {/* Left-center handle */}
       <div
         data-no-dnd
-        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -left-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
           isVisible ? 'visible' : 'invisible'
         } `}
         onMouseDown={(e) => onResizeHandleMouseDown('left', e)}
@@ -106,7 +108,7 @@ const DRRHandles = ({
       {/* Right-center handle */}
       <div
         data-no-dnd
-        className={`handle absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
+        className={`absolute w-3 h-3 ${bgColor} ${borderWidth} ${borderColor} -right-1.5 top-1/2 -translate-y-1/2 hover:cursor-col-resize ${
           isVisible ? 'visible' : 'invisible'
         } `}
         onMouseDown={(e) => onResizeHandleMouseDown('right', e)}
@@ -115,7 +117,7 @@ const DRRHandles = ({
       {/* rotate handle */}
       <div
         data-no-dnd
-        className={`handle absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[40%] -translate-x-1/2 rounded-full hover:cursor-ew-resize ${
+        className={`absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[40%] -translate-x-1/2 rounded-full hover:cursor-ew-resize ${
           isRotating ? 'bg-blue-300' : 'hover:bg-blue-300'
         } ${isVisible ? 'visible' : 'invisible'} `}
         onMouseDown={onRotateHandleMouseDown}
@@ -133,7 +135,7 @@ const DRRHandles = ({
       Without translation: The element's left edge would be at 60%, potentially misaligned from design intent
       */}
       <div
-        className={`handle absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[60%] -translate-x-1/2 rounded-full hover:cursor-move hover:bg-blue-300 ${
+        className={`absolute w-4 h-4 ${bgColor} ${borderWidth} ${borderColor} -bottom-6 left-[60%] -translate-x-1/2 rounded-full hover:cursor-move hover:bg-blue-300 ${
           isVisible ? 'visible' : 'invisible'
         } `}
       >
@@ -150,6 +152,8 @@ function DRRContainer({
   children,
   sizeChangeCallback,
   toastCallback,
+  onFocus,
+  onBlur,
 }: DRRContainerProps) {
   const [rectWidth, setRectWidth] = useState(initialPosition.width);
   const [rectHeight, setRectHeight] = useState(initialPosition.height);
@@ -333,6 +337,8 @@ function DRRContainer({
       }}
     >
       <Draggable
+        onFocus={onFocus}
+        onBlur={onBlur}
         left={x}
         top={y}
         rotation={rotation}

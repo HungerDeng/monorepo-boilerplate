@@ -29,6 +29,7 @@ const defaultTextConfig: TextConfig = {
   textShadowBlur: 0,
   textShadowColor: '#000000',
   backgroundColor: 'transparent',
+  isTextAreaSelected: false,
 };
 
 export interface TextConfig {
@@ -55,15 +56,13 @@ export interface TextConfig {
   textShadowBlur: number;
   textShadowColor: string;
   backgroundColor: string;
+  isTextAreaSelected: boolean;
 }
 
 interface TextAreaProps {
-  uniqueId: string; // the unique id of the text area. currently, we just manually obey the uniqueId rule, even though having automatical check logic is more robust.
   validAreaId: string; // the id of the area that the text area belongs to, when the text area move/resize outsize the valid area, maybe trigger the error/warning toast
   initialPosition: PositionProps;
   textConfig: TextConfig;
-  onSelectedCallback?: (uniqueId: string) => void;
-  onDeselectedCallback?: (uniqueId: string) => void;
   toastCallback?: ({
     title,
     message,
@@ -71,20 +70,20 @@ interface TextAreaProps {
     title: string;
     message: string;
   }) => void;
+  onFocus?: (e: React.FocusEvent<HTMLDivElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLDivElement>) => void;
 }
 
 function TextArea({
-  uniqueId,
   initialPosition,
   textConfig,
   validAreaId,
-  onSelectedCallback,
-  onDeselectedCallback,
   toastCallback,
+  onFocus,
+  onBlur,
 }: TextAreaProps) {
   const [text, setText] = useState(textConfig.initialText);
   const [textFontSize, setTextFontSize] = useState(0);
-  const [isTextAreaSelected, setIsTextAreaSelected] = useState(false);
   const [textAreaWidth, setTextAreaWidth] = useState(initialPosition.width);
   const [textAreaHeight, setTextAreaHeight] = useState(initialPosition.height);
 
@@ -92,12 +91,14 @@ function TextArea({
     <DRRContainer
       initialPosition={initialPosition}
       validAreaId={validAreaId}
-      isHandlesVisible={isTextAreaSelected}
+      isHandlesVisible={textConfig.isTextAreaSelected}
       sizeChangeCallback={(newWidth, newHeight) => {
         setTextAreaWidth(newWidth);
         setTextAreaHeight(newHeight);
       }}
       toastCallback={toastCallback}
+      onFocus={onFocus}
+      onBlur={onBlur}
     >
       <div className='w-full h-full'>
         {/* Textfit is invisible, because we just use it for calculating suitabletextFontSize */}
@@ -223,31 +224,6 @@ function TextArea({
               }}
               onInput={(e) => {
                 setText(e.currentTarget.textContent || '');
-              }}
-              onFocus={() => {
-                setIsTextAreaSelected(true);
-                onSelectedCallback?.(uniqueId);
-              }}
-              onBlur={(e) => {
-                const relatedTarget = e.relatedTarget as HTMLElement;
-                // Check if blur is caused by TextToolbar interaction
-                const isToolbarInteraction = relatedTarget?.closest(
-                  '.text-toolbar, .text-toolbar-popover',
-                );
-
-                if (
-                  !relatedTarget?.querySelector('.handle') &&
-                  !isToolbarInteraction
-                ) {
-                  setIsTextAreaSelected(false);
-                  onDeselectedCallback?.(uniqueId);
-                } else {
-                  // TODO(not high priority): interacting with the drag handle when the text editor is focused will cause the focus to be lost. But the 'isTextEditorFocused' state is still true, preventing the DRRHandles from becoming invisible. So looks like it's not a big issue now.
-                  // The original reason I added the below line of code is to make the editing text remain focused when user drag the text area.
-                  // However, it makes the corresponding textToolbar can't display its popover content when user interacts with the textToolbar, because the focus of popover content always transfers to the editing text.
-                  // So I have to make a trade-off, commenting out the below line of code, since the textToolbar user experience is more important than the text focus.
-                  // e.currentTarget.focus();
-                }
               }}
             >
               Edit Me.

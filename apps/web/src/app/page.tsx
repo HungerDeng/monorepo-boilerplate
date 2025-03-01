@@ -151,6 +151,27 @@ export default function TwoButtonsPage() {
     }
   };
 
+  const selectedTextAreaByUniqueId = (uniqueId: string) => {
+    setTextConfigs({
+      ...textConfigs,
+      [uniqueId]: {
+        ...textConfigs[uniqueId],
+        isTextAreaSelected: true,
+      },
+    });
+    setSelectedTextAreaId(uniqueId);
+    setIsTextToolbarVisible(true);
+  };
+
+  const deselectTextAreaByUniqueId = (uniqueId: string) => {
+    setTextConfigs({
+      ...textConfigs,
+      [uniqueId]: { ...textConfigs[uniqueId], isTextAreaSelected: false },
+    });
+    setSelectedTextAreaId('');
+    setIsTextToolbarVisible(false);
+  };
+
   return (
     <main className='flex min-h-screen gap-4'>
       {/* Simplified Sidebar Controls */}
@@ -287,6 +308,10 @@ export default function TwoButtonsPage() {
               copyAllTextStyleCallback={() => {
                 console.log('copy all text style');
               }}
+              onBlur={() => {
+                console.log('text toolbar onBlur');
+                deselectTextAreaByUniqueId(selectedTextAreaId);
+              }}
             />
           )}
         </div>
@@ -313,13 +338,18 @@ export default function TwoButtonsPage() {
                   {...textBox}
                   textConfig={textConfigs[textBox.uniqueId]}
                   toastCallback={textAreaToastCallback}
-                  onSelectedCallback={() => {
-                    setSelectedTextAreaId(textBox.uniqueId);
-                    setIsTextToolbarVisible(true);
+                  onFocus={() => {
+                    selectedTextAreaByUniqueId(textBox.uniqueId);
                   }}
-                  onDeselectedCallback={() => {
-                    setSelectedTextAreaId('');
-                    setIsTextToolbarVisible(false);
+                  onBlur={(e) => {
+                    const relatedTarget = e.relatedTarget as HTMLElement;
+                    // Check if blur is caused by TextToolbar interaction. If it is, should keep the text area selected.
+                    const isToolbarInteraction = relatedTarget?.closest(
+                      '.text-toolbar, .text-toolbar-popover',
+                    );
+                    if (!isToolbarInteraction) {
+                      deselectTextAreaByUniqueId(textBox.uniqueId);
+                    }
                   }}
                 />
               ))}

@@ -40,6 +40,8 @@ interface DraggableProps {
   height: number;
   className?: string;
   children: React.ReactNode;
+  onFocus?: (e: React.FocusEvent<HTMLDivElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLDivElement>) => void;
 }
 
 function Draggable(props: DraggableProps) {
@@ -52,6 +54,8 @@ function Draggable(props: DraggableProps) {
     <div
       className={`${props.className}`}
       ref={setNodeRef}
+      onFocus={props.onFocus}
+      onBlur={props.onBlur}
       style={{
         top: props.top,
         left: props.left,
