@@ -140,11 +140,13 @@ function TextArea({
           <div
             style={{
               color: textConfig.fontColor,
-              textDecoration: textConfig.underline
-                ? 'underline'
-                : textConfig.linethrough
-                  ? 'line-through'
-                  : 'none',
+              textDecoration:
+                [
+                  textConfig.underline && 'underline',
+                  textConfig.linethrough && 'line-through',
+                ]
+                  .filter(Boolean)
+                  .join(' ') || 'none',
               textTransform: textConfig.uppercase ? 'uppercase' : 'none',
               fontFamily: textConfig.fontFamily,
               textAlign: textConfig.horizontalTextAlign as
@@ -186,11 +188,13 @@ function TextArea({
               className='relative z-10 cursor-text'
               style={{
                 color: textConfig.fontColor,
-                textDecoration: textConfig.underline
-                  ? 'underline'
-                  : textConfig.linethrough
-                    ? 'line-through'
-                    : 'none',
+                textDecoration:
+                  [
+                    textConfig.underline && 'underline',
+                    textConfig.linethrough && 'line-through',
+                  ]
+                    .filter(Boolean)
+                    .join(' ') || 'none',
                 textTransform: textConfig.uppercase ? 'uppercase' : 'none',
                 fontFamily: textConfig.fontFamily,
                 fontSize: textFontSize,
