@@ -309,7 +309,6 @@ export default function TwoButtonsPage() {
                 console.log('copy all text style');
               }}
               onBlur={() => {
-                console.log('text toolbar onBlur');
                 deselectTextAreaByUniqueId(selectedTextAreaId);
               }}
             />

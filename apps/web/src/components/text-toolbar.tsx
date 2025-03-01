@@ -161,7 +161,13 @@ export function TextToolbar({
   return textConfig ? (
     <TooltipProvider>
       <div
-        className={`bg-white shadow-lg rounded-lg p-2 flex items-center gap-1 border border-gray-200 ${className}`}
+        className={`text-toolbar bg-white shadow-lg rounded-lg p-2 flex items-center gap-1 border border-gray-200 ${className}`}
+        onMouseDown={(e) => {
+          // Prevent focus loss when clicking padding area
+          if (e.target === e.currentTarget) {
+            e.preventDefault();
+          }
+        }}
         onBlur={(e) => {
           const relatedTarget = e.relatedTarget as HTMLElement;
           const isToolbarInteraction = relatedTarget?.closest(
