@@ -2,7 +2,6 @@
   "extends": ["@commitlint/config-conventional"],
   "rules": {
     "header-max-length": [0],
-    "scope-empty": [2, "never"],
     "type-enum": [
       2,
       "always",
@@ -16,8 +15,10 @@
         "perf",
         "test",
         "chore",
-        "revert"
+        "revert",
+        "todo"
       ]
-    ]
+    ],
+    "body-max-line-length": [0]
   }
 }
