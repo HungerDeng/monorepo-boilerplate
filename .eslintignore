@@ -1,6 +1,7 @@
 node_modules/
 dist/
 components/
+shadcn/
 pnpm-lock.yaml
 tsconfig.json
 tailwind.config.js
